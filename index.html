@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shukanto — Motion Designer & Video Editor</title>
+<meta name="description" content="Shukanto is a motion designer and video editor. Titles, edits, color and sound.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/projects.css">
+<link rel="stylesheet" href="css/loader.css">
+</head>
+<body>
+<header>
+<a class="wordmark" href="#">Shukanto</a>
+<nav aria-label="Main"><a href="#about">About</a><a href="#services">Services</a><a href="#projects">Projects</a><a href="#contact">Contact</a></nav>
+</header>
+<main>
+<div class="hero">
+<div class="glow" aria-hidden="true"></div>
+<canvas id="erase" aria-hidden="true"></canvas>
+<h1>Shukanto</h1>
+<div class="sub">
+<p>Motion designer and video editor. I turn raw footage into rhythm, pace and feeling.</p>
+<div class="cta"><a class="btn solid" href="#projects">See the projects</a><a class="btn" href="#contact">Get in touch</a></div>
+</div>
+<div class="tl" aria-hidden="true">
+<div class="track"><div class="clip" style="--h:260;left:4%;width:22%"></div><div class="clip" style="--h:300;left:30%;width:14%"></div><div class="clip" style="--h:240;left:52%;width:30%"></div><div class="clip" style="--h:320;left:85%;width:12%"></div></div>
+<div class="track"><div class="clip" style="--h:200;left:0;width:18%"></div><div class="clip" style="--h:215;left:19%;width:26%"></div><div class="clip" style="--h:190;left:46%;width:20%"></div><div class="clip" style="--h:225;left:67%;width:33%"></div></div>
+<div class="track"><div class="clip wave" style="left:0;width:100%"></div></div>
+<div class="head"></div>
+</div>
+</div>
+<section class="work" id="projects" aria-label="Projects">
+<div id="stage"><div id="world"><div id="orb"></div>
+<h1 id="headline"><span class="inner"><span style="--i:0">Cutting</span> <span style="--i:1">Stories</span> <span style="--i:2">Into</span> <span style="--i:3">Motion</span></span></h1></div></div>
+<div class="vig"></div>
+<div class="bio chrome"><div class="who"><div class="mono">S</div><b>Shukanto</b></div><p>Motion designer and video editor. I shape raw footage into pacing, rhythm and feeling. Every project in this sphere is yours to open: tap one to watch it.</p></div>
+<button class="gridbtn chrome" id="gridBtn" aria-label="Toggle grid view"><b></b><b></b><b></b><b></b></button>
+<div class="cue chrome"><s></s><span>Drag to rotate</span></div>
+</section>
+<section id="about"><div class="two">
+<h2>The edit is where the story gets decided.</h2>
+<div class="text"><p>I'm Shukanto, a motion designer and video editor. I work with the footage you already have and find the version of it that moves: tighter pacing, cleaner transitions, type and graphics that belong in the frame.</p><p>I edit commercials, music videos, short films and social content, and I care most about the cuts nobody notices.</p></div>
+</div></section>
+<section id="services"><div class="two">
+<h2>What I do</h2>
+<ul class="list">
+<li><b>Video editing</b><span>Narrative, commercial and social cuts, paced to the story and the soundtrack.</span></li>
+<li><b>Motion graphics</b><span>Titles, kinetic type, logo animation and explainers.</span></li>
+<li><b>Color and sound</b><span>Grading, audio cleanup and mixing so the picture and sound match.</span></li>
+<li><b>Short-form</b><span>Vertical edits and reels built for the first second of the scroll.</span></li>
+</ul>
+</div>
+<div class="two" style="margin-top:clamp(40px,6vw,80px)"><h2>Tools</h2><div class="text"><p>After Effects, Premiere Pro, DaVinci Resolve, Cinema 4D and Final Cut Pro.</p></div></div>
+</section>
+<section id="contact"><div class="two">
+<h2>Have a project in mind?</h2>
+<div class="text"><p>Tell me what you're making and when you need it. I reply within two days.</p><a class="mail" href="mailto:hello@shukanto.com">hello@shukanto.com</a></div>
+</div></section>
+</main>
+<footer><span>© 2026 Shukanto</span><a href="#projects">Browse all projects</a></footer>
+<div id="grid"><div class="rows" id="rows"></div></div>
+<button class="gridclose" id="gridClose">Close</button>
+<div id="lit"><div class="scrim" data-close></div><div class="plate" id="plate">
+<div class="shot" id="shot"><img id="litImg" alt=""><video id="litVid" controls playsinline preload="none"></video><iframe id="litEmb" title="Project video" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe><button class="close" data-close>Close</button></div>
+<div class="meta"><div><h2 id="litTitle"></h2><div class="where" id="litWhere"></div></div><p class="note" id="litNote"></p></div>
+</div></div>
+<div id="intro"><div class="fallback"></div><video id="film" muted playsinline webkit-playsinline autoplay preload="auto" disablepictureinpicture></video><div class="veil"></div><button class="skip" id="skip">Skip</button></div>
+<div id="splash"><div class="mark">Shukanto</div><div class="bar"><s id="bar"></s></div><div class="tag">Motion &amp; Video Editor</div></div>
+<div id="dot"></div>
+<script src="js/data.js"></script>
+<script src="js/loader.js"></script>
+<script src="js/projects.js"></script>
+<script src="js/hero.js"></script>
+</body>
+</html>
