@@ -42,7 +42,8 @@ if(q){
 }
 
 /* Contact */
-if(S.contactEmail)$$(".emailme").forEach(function(e){e.href="mailto:"+S.contactEmail});
+/* Email me opens a Gmail compose window with the contact email in "To" */
+if(S.contactEmail)$$(".emailme").forEach(function(e){e.href="https://mail.google.com/mail/?view=cm&fs=1&to="+encodeURIComponent(S.contactEmail);e.target="_blank";e.rel="noopener"});
 
 /* No projects yet: hide the sphere and the links to it */
 if(!(S.projects&&S.projects.length)){
