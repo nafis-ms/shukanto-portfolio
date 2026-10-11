@@ -19,3 +19,6 @@ var P=[
 ["Low Light","Concert film · DaVinci Resolve","Multi-cam cut of a live set, matched across five cameras in near darkness.","","",""],
 ["Echo Room","Sound-led edit · Premiere Pro","Sound design first, picture second. Every cut sits on a sound.","","",""]
 ];
+
+/* Footer links. Email is live; add more like ["Instagram","https://instagram.com/yourname"] (also: YouTube, Facebook, LinkedIn, Behance) */
+var SOCIALS=[["Email","mailto:shukanto99@gmail.com"]];
