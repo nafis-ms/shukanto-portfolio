@@ -1,0 +1,92 @@
+/* Cinematic motion layer: every block of text and content has its own effect.
+   Load after loader.css. Pairs with js/cinematic.js */
+:root{--e:cubic-bezier(.2,.8,.2,1);--cut:cubic-bezier(.77,0,.18,1)}
+
+/* replace the old generic fade (.rv) from site.js */
+.rv,.rv.in{opacity:1;transition:none}
+.rv{transform:none}
+.marq.rv{transform:skewX(var(--sk,0deg))}
+.talk{overflow:hidden}
+
+/* split text */
+.w{display:inline-block;white-space:nowrap}
+.c{display:inline-block;transform-origin:0 100%}
+
+/* 1. HERO NAME + ABOUT HEADLINE: masked rise */
+[data-fx=rise] .w,[data-fx=mask] .w{overflow:hidden;vertical-align:top;padding:.14em .06em;margin:-.14em -.06em}
+[data-fx=rise]:not(.in) .c,[data-fx=mask]:not(.in) .c{transform:translateY(118%) rotate(7deg);opacity:0}
+[data-fx=rise].in .c{animation:rise 1.15s var(--e) calc(var(--b,0s) + var(--i)*45ms) backwards}
+[data-fx=mask].in .c{animation:rise 1.1s var(--e) calc(var(--b,0s) + var(--i)*85ms) backwards}
+@keyframes rise{from{transform:translateY(118%) rotate(7deg);opacity:0}}
+
+/* 2. PARAGRAPHS: rack focus (blur to sharp, word by word) */
+[data-fx=focus]:not(.in) .c{opacity:0;filter:blur(10px);transform:translateY(10px) scale(1.07)}
+[data-fx=focus].in .c{animation:focus .9s var(--e) calc(var(--b,0s) + var(--i)*30ms) backwards}
+@keyframes focus{from{opacity:0;filter:blur(10px);transform:translateY(10px) scale(1.07)}}
+
+/* 3. SERVICES HEADLINE: wide tracking collapses into place */
+[data-fx=track]:not(.in){letter-spacing:.4em;opacity:0;filter:blur(10px)}
+[data-fx=track].in{animation:track 1.7s var(--e) backwards}
+@keyframes track{from{letter-spacing:.4em;opacity:0;filter:blur(10px)}}
+
+/* 4. QUALIFICATION HEADLINE: 3D letter flip */
+[data-fx=flip] .w{perspective:700px}
+[data-fx=flip] .c{transform-origin:50% 100%}
+[data-fx=flip]:not(.in) .c{transform:rotateX(-100deg) translateY(30%);opacity:0}
+[data-fx=flip].in .c{animation:flip 1.1s var(--e) calc(var(--b,0s) + var(--i)*55ms) backwards}
+@keyframes flip{from{transform:rotateX(-100deg) translateY(30%);opacity:0}}
+
+/* 5. LIST ROWS: wipe open, text slides in, icons draw, chips pop */
+[data-fx=wipe]:not(.in){-webkit-mask:linear-gradient(#000,#000) 0 0/0% 100% no-repeat;mask:linear-gradient(#000,#000) 0 0/0% 100% no-repeat}
+[data-fx=wipe].in{animation:wipe 1.15s var(--cut) var(--d,0s) backwards}
+@keyframes wipe{from{-webkit-mask:linear-gradient(#000,#000) 0 0/0% 100% no-repeat;mask:linear-gradient(#000,#000) 0 0/0% 100% no-repeat}to{-webkit-mask:linear-gradient(#000,#000) 0 0/100% 100% no-repeat;mask:linear-gradient(#000,#000) 0 0/100% 100% no-repeat}}
+[data-fx=wipe]:not(.in)>*{opacity:0;transform:translateX(-34px);filter:blur(8px)}
+[data-fx=wipe].in>:first-child{animation:slide 1s var(--e) calc(var(--d,0s) + .25s) backwards}
+[data-fx=wipe].in>:nth-child(2){animation:slide 1s var(--e) calc(var(--d,0s) + .4s) backwards}
+@keyframes slide{from{opacity:0;transform:translateX(-34px);filter:blur(8px)}}
+.list svg *{stroke-dasharray:1}
+[data-fx=wipe]:not(.in) svg *{stroke-dashoffset:1}
+[data-fx=wipe].in svg *{animation:draw 1.4s var(--e) calc(var(--d,0s) + .3s) backwards}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+[data-fx=wipe]:not(.in) .chips span{opacity:0;transform:scale(.5)}
+[data-fx=wipe].in .chips span{animation:pop .7s cubic-bezier(.34,1.56,.64,1) calc(var(--d,0s) + .6s + var(--j,0)*90ms) backwards}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+
+/* 6. HERO TIMELINE: clips grow like a sequence being laid down */
+.clip{transform-origin:0 50%}
+.tl:not(.in) .clip{transform:scaleX(0)}
+.tl.in .clip{animation:grow 1.1s var(--cut) calc(.5s + var(--k,0)*80ms) backwards}
+@keyframes grow{from{transform:scaleX(0)}}
+.tl .head{transition:opacity 1s 1.2s}
+.tl:not(.in) .head{opacity:0}
+
+/* 7. MARQUEE: opens from the center, skews with scroll speed */
+[data-fx=reel]:not(.in){-webkit-mask:linear-gradient(#000,#000) 50% 0/0% 100% no-repeat;mask:linear-gradient(#000,#000) 50% 0/0% 100% no-repeat}
+[data-fx=reel].in{animation:reel 1.4s var(--cut) backwards}
+@keyframes reel{from{-webkit-mask:linear-gradient(#000,#000) 50% 0/0% 100% no-repeat;mask:linear-gradient(#000,#000) 50% 0/0% 100% no-repeat}to{-webkit-mask:linear-gradient(#000,#000) 50% 0/100% 100% no-repeat;mask:linear-gradient(#000,#000) 50% 0/100% 100% no-repeat}}
+
+/* 8. LET'S TALK: dolly-in zoom with tracking snap */
+[data-fx=zoom]:not(.in){transform:scale(1.55);opacity:0;filter:blur(18px);letter-spacing:.05em}
+[data-fx=zoom].in{animation:zoom 1.8s var(--e) backwards}
+@keyframes zoom{from{transform:scale(1.55);opacity:0;filter:blur(18px);letter-spacing:.05em}}
+
+/* 9. BUTTONS + FOOTER: rise with a soft focus pull */
+[data-fx=up]:not(.in){opacity:0;transform:translateY(34px) scale(.97);filter:blur(6px)}
+[data-fx=up].in{animation:up 1.1s var(--e) var(--d,0s) backwards}
+@keyframes up{from{opacity:0;transform:translateY(34px) scale(.97);filter:blur(6px)}}
+.emailme{position:relative;overflow:hidden}
+.emailme::after{content:"";position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.38),transparent);transform:translateX(-160%) skewX(-20deg);animation:sheen 3.8s 1.8s ease-in-out infinite;pointer-events:none}
+@keyframes sheen{0%{transform:translateX(-160%) skewX(-20deg)}40%,100%{transform:translateX(420%) skewX(-20deg)}}
+
+/* 10. HEADER */
+header[data-fx=drop]:not(.in){opacity:0;transform:translateY(-24px)}
+header[data-fx=drop].in{animation:drop 1.2s var(--e) .4s backwards}
+@keyframes drop{from{opacity:0;transform:translateY(-24px)}}
+
+/* film look: letterbox bars open on load, plus light film grain */
+.lbx{position:fixed;left:0;right:0;height:14vh;background:#000;z-index:150;pointer-events:none;transition:transform 1.9s var(--cut)}
+.lbx.t{top:0}.lbx.b{bottom:0}
+.lbx.t.open{transform:translateY(-100%)}
+.lbx.b.open{transform:translateY(100%)}
+.grain{position:fixed;inset:-50%;z-index:140;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");animation:grain .9s steps(1) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-6%,4%)}40%{transform:translate(5%,-7%)}60%{transform:translate(-4%,-3%)}80%{transform:translate(7%,6%)}}
