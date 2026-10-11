@@ -1,0 +1,115 @@
+/* Mobile, tablet and touch fixes. Load LAST (after theme.css and the inline <style> in index.html).
+   Pairs with js/menu.js and the #navLinks / #menuBtn markup in the header. */
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { -webkit-tap-highlight-color: transparent; }
+
+/* The hero glow "breathes" with scale(1.1), which pushed the page about 5% wider than the screen.
+   On phones that made the browser zoom the whole page out. Clip it to the hero. */
+.glow { overflow: hidden; }
+
+/* ---------- header: links group + hamburger ---------- */
+header .links { display: flex; align-items: center; gap: clamp(16px, 3vw, 36px); }
+header .menu {
+  display: none; position: relative; width: 38px; height: 38px; flex: none; place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 50%; color: #fff;
+  transition: background 0.3s, border-color 0.3s;
+}
+header .menu:hover { background: rgba(255, 255, 255, 0.2); border-color: #fff; }
+header .menu svg { grid-area: 1/1; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+header .menu path { transform-box: fill-box; transform-origin: center; transition: transform 0.35s var(--e); }
+header.menu-open .menu .l1 { transform: translateY(4px) rotate(45deg); }
+header.menu-open .menu .l2 { transform: translateY(-4px) rotate(-45deg); }
+:root[data-theme="light"] header .menu { color: var(--ink); border-color: rgba(43, 27, 18, 0.45); }
+:root[data-theme="light"] header .menu:hover { background: rgba(194, 65, 12, 0.12); border-color: var(--navy); }
+
+/* The full link row needs about 900px. Below that it becomes a full-screen menu. */
+@media (max-width: 900px) {
+  header {
+    mix-blend-mode: normal; /* the difference blend would invert the menu panel */
+    background: linear-gradient(var(--bg), transparent);
+  }
+  header nav { gap: 10px; }
+  header nav .tmode { margin-left: 0; }
+  header nav a.cvbtn { margin-right: 0; }
+  header .menu { display: grid; }
+
+  header .links {
+    position: fixed; inset: 0; z-index: -1; /* sits under the header buttons, over the page */
+    flex-direction: column; justify-content: center; align-items: center; gap: 4px;
+    padding: calc(90px + env(safe-area-inset-top, 0px)) var(--pad) calc(40px + env(safe-area-inset-bottom, 0px));
+    background: var(--bg); opacity: 0; visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0s 0.35s;
+    overflow-y: auto;
+  }
+  header.menu-open .links { opacity: 1; visibility: visible; transition: opacity 0.35s ease; }
+  header .links a {
+    display: block; font-family: var(--serif); font-size: clamp(30px, 8vw, 44px); line-height: 1.25;
+    padding: 8px 14px; opacity: 0; transform: translateY(14px);
+    transition: opacity 0.45s ease, transform 0.45s var(--e);
+  }
+  header.menu-open .links a { opacity: 1; transform: none; }
+  header.menu-open .links a:nth-child(1) { transition-delay: 0.08s; }
+  header.menu-open .links a:nth-child(2) { transition-delay: 0.13s; }
+  header.menu-open .links a:nth-child(3) { transition-delay: 0.18s; }
+  header.menu-open .links a:nth-child(4) { transition-delay: 0.23s; }
+  header.menu-open .links a:nth-child(5) { transition-delay: 0.28s; }
+  body.menu-open { overflow: hidden; }
+}
+
+/* ---------- touch devices ---------- */
+@media (hover: none) {
+  .rows figcaption { opacity: 1; transform: none; } /* captions were hover-only, so tablets never saw them */
+}
+@media (pointer: coarse) {
+  .grain { display: none; } /* animated full-screen noise is heavy on phone GPUs */
+  header nav .tmode, header .menu { width: 44px; height: 44px; }
+  header nav a.cvbtn { height: 44px; }
+  .dots button { width: 32px; height: 32px; }
+  footer nav a { padding: 10px 4px; }
+  .soc a { width: 44px; height: 44px; }
+}
+@media (pointer: coarse) and (max-width: 640px) {
+  header nav a.cvbtn { width: 44px; }
+}
+
+/* ---------- phones ---------- */
+@media (max-width: 640px) {
+  footer { flex-direction: column; justify-content: center; text-align: center; gap: 16px; }
+  footer nav { flex-wrap: wrap; justify-content: center; gap: 6px 16px; }
+  .fb-show { padding: 22px 20px; }
+  .emailme { padding: 0 34px; }
+  .talk h2 { font-size: clamp(40px, 13.5vw, 70px); } /* "LET'S TALK" stays on one line down to 320px */
+}
+@media (max-width: 380px) {
+  .cta { width: 100%; }
+  .cta .btn { flex: 1; justify-content: center; padding: 0 16px; }
+}
+@media (max-width: 360px) {
+  header .wordmark { font-size: 17px; } /* at 320px it sat 2px from the CV button */
+}
+
+/* main.css hid the first link of every nav under 760px to save room. The header now has the menu,
+   and the footer wraps, so About comes back in both. */
+@media (max-width: 760px) {
+  header .links a:first-child, footer nav a:first-child { display: block; }
+}
+
+/* ---------- phones in landscape (short screens) ---------- */
+@media (max-width: 900px) and (max-height: 520px) {
+  header .links {
+    flex-flow: row wrap; justify-content: center; align-content: center; gap: 2px 20px;
+    padding: calc(64px + env(safe-area-inset-top, 0px)) var(--pad) 20px;
+  }
+  header .links a { font-size: clamp(22px, 7vh, 30px); padding: 6px 8px; }
+}
+
+/* ---------- notches and rounded corners (viewport-fit=cover) ---------- */
+header, footer {
+  padding-left: max(var(--pad), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--pad), env(safe-area-inset-right, 0px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  header .links, header .links a, header .menu path { transition: none; }
+}
