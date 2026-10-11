@@ -8,7 +8,7 @@ var FB={
     Set to "" to skip the backend: submissions are then only kept in the visitor's own browser (testing only). */
  api:"/api/feedback",
  interval:6500,   /* ms per slide */
- demo:true        /* sample slides, shown ONLY on localhost / file:// so you can preview the design */
+ demo:false       /* sample slides, shown ONLY on localhost / file:// so you can preview the design */
 };
 var $=function(s){return document.querySelector(s)};
 var form=$("#fbForm");if(!form)return;

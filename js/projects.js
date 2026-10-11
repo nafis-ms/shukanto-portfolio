@@ -21,6 +21,7 @@ for(var i=0;i<N;i++){
  var f=document.createElement("figure"),im=document.createElement("img");im.alt="";im.decoding="async";
  im.onload=function(){this.classList.add("in");window.loadTick&&loadTick()};im.onerror=function(){window.loadTick&&loadTick()};im.src=thumbs[i];
  f.appendChild(im);c.appendChild(f);orb.appendChild(c);cards.push(c);cimg.push(im);
+ if(i>=REAL)continue; /* repeated cards only fill the sphere; the grid lists each project once */
  var g=document.createElement("figure");g.dataset.idx=i;g.tabIndex=0;g.setAttribute("role","button");
  var gi=document.createElement("img");gi.alt=P[i][0];gi.loading="lazy";gi.src=thumbs[i];
  var gc=document.createElement("figcaption");gc.textContent=P[i][0];
