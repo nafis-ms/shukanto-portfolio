@@ -7,7 +7,7 @@
 .skip{position:absolute;right:calc(var(--pad) + var(--sr));bottom:calc(var(--pad) + var(--sb));font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,242,239,.6);min-height:44px;padding:10px 18px;border:1px solid rgba(244,242,239,.25);border-radius:999px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:color .3s,border-color .3s,opacity .4s}
 .skip:hover{color:#fff;border-color:rgba(255,255,255,.7)}
 #intro.closing .skip{opacity:0}
-.fallback{position:absolute;inset:0;background:radial-gradient(circle at 50% 46%,#14301a 0%,#060c07 42%,#000 72%);opacity:0}
+.fallback{position:absolute;inset:0;background:radial-gradient(circle at 50% 46%,#142a55 0%,#060a16 42%,#000 72%);opacity:0}
 #intro.novideo .fallback{opacity:1}
 #splash{position:fixed;inset:0;z-index:250;background:#000;display:grid;place-items:center;align-content:center;gap:26px;transition:opacity .6s ease}
 #splash.out{opacity:0;pointer-events:none}
