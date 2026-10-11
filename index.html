@@ -3,25 +3,44 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Shukanto — Motion Designer & Video Editor</title>
-<meta name="description" content="Shukanto is a motion designer and video editor. Titles, edits, color and sound.">
+<title>Shukanto Shishir — Motion Designer & Video Editor</title>
+<meta name="description" content="Shukanto Shishir is a motion designer and video editor. Titles, edits, color and sound.">
+<meta name="theme-color" content="#000405">
+<script>(function(){var t="dark";try{var s=localStorage.getItem("theme");if(s==="light"||s==="dark")t=s}catch(e){}document.documentElement.setAttribute("data-theme",t)})()</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css">
 <link rel="stylesheet" href="css/projects.css">
 <link rel="stylesheet" href="css/loader.css">
+<link rel="stylesheet" href="css/cinematic.css">
+<link rel="stylesheet" href="css/feedback.css">
+<link rel="stylesheet" href="css/theme.css">
+<style>
+/* About: contact details (compact) */
+.text .contact{margin-top:clamp(22px,2.6vw,34px);max-width:60ch}
+.contact li{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);align-items:center;gap:16px;padding:13px 0}
+.contact b{font-size:clamp(16px,1.35vw,19px);gap:12px}
+.contact svg{width:19px;height:19px}
+.contact span{font-size:clamp(14.5px,1.2vw,16px);color:var(--ink);overflow-wrap:anywhere}
+.contact a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:1px;transition:color .3s,border-color .3s}
+.contact a:hover,.contact a:focus-visible{color:var(--blue);border-color:var(--blue)}
+.contact li svg{transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.contact li:hover svg{transform:translateX(4px) scale(1.12)}
+@media (max-width:760px){.contact li{grid-template-columns:1fr;gap:4px;padding:12px 0}}
+</style>
 </head>
 <body>
 <header>
-<a class="wordmark" href="#">Shukanto</a>
-<nav aria-label="Main"><a href="#about">About</a><a href="#services">Services</a><a href="#projects">Projects</a><a href="#contact">Contact</a></nav>
+<a class="wordmark" href="#">Shukanto Shishir</a>
+<nav aria-label="Main"><a href="#about">About</a><a href="#services">Services</a><a href="#projects">Projects</a><a href="#feedback">Feedback</a><a href="#contact">Contact</a><button class="tmode" id="tmode" type="button" aria-label="Switch to light mode"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button></nav>
 </header>
 <main>
 <div class="hero">
 <div class="glow" aria-hidden="true"></div>
+<div class="grid-bg" aria-hidden="true"></div>
 <canvas id="erase" aria-hidden="true"></canvas>
-<h1>Shukanto</h1>
+<h1>Shukanto<br>Shishir</h1>
 <div class="sub">
 <p>Motion designer and video editor. I turn raw footage into rhythm, pace and feeling.</p>
 <div class="cta"><a class="btn solid" href="#projects">See the projects</a><a class="btn" href="#contact">Get in touch</a></div>
@@ -33,35 +52,87 @@
 <div class="head"></div>
 </div>
 </div>
-<section class="work" id="projects" aria-label="Projects">
-<div id="stage"><div id="world"><div id="orb"></div>
-<h1 id="headline"><span class="inner"><span style="--i:0">Cutting</span> <span style="--i:1">Stories</span> <span style="--i:2">Into</span> <span style="--i:3">Motion</span></span></h1></div></div>
-<div class="vig"></div>
-<div class="bio chrome"><div class="who"><div class="mono">S</div><b>Shukanto</b></div><p>Motion designer and video editor. I shape raw footage into pacing, rhythm and feeling. Every project in this sphere is yours to open: tap one to watch it.</p></div>
-<button class="gridbtn chrome" id="gridBtn" aria-label="Toggle grid view"><b></b><b></b><b></b><b></b></button>
-<div class="cue chrome"><s></s><span>Drag to rotate</span></div>
-</section>
 <section id="about"><div class="two">
 <h2>The edit is where the story gets decided.</h2>
-<div class="text"><p>I'm Shukanto, a motion designer and video editor. I work with the footage you already have and find the version of it that moves: tighter pacing, cleaner transitions, type and graphics that belong in the frame.</p><p>I edit commercials, music videos, short films and social content, and I care most about the cuts nobody notices.</p></div>
+<div class="text"><p>I'm Shukanto Shishir, a motion designer and video editor based in Dhaka, Bangladesh. I take the footage and ideas you already have and shape them into something that moves: clear pacing, clean transitions and graphics that belong in the frame.</p><p>Away from the timeline I'm studying engineering, and I like music, travel and games. All of it feeds how I think about rhythm and detail.</p>
+<ul class="list contact">
+<li><b><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email</b><span><a href="mailto:shukanto99@gmail.com">shukanto99@gmail.com</a></span></li>
+<!-- EDIT: put your real number in BOTH places. href uses the international format with no spaces. -->
+<li><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Phone</b><span><a href="tel:+8801XXXXXXXXX">+880 1XXX-XXXXXX</a></span></li>
+<!-- EDIT: add your street or area before "Dhaka" if you want it shown. -->
+<li><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Address</b><span>Dhaka, Bangladesh</span></li>
+</ul></div>
 </div></section>
 <section id="services"><div class="two">
 <h2>What I do</h2>
 <ul class="list">
-<li><b>Video editing</b><span>Narrative, commercial and social cuts, paced to the story and the soundtrack.</span></li>
-<li><b>Motion graphics</b><span>Titles, kinetic type, logo animation and explainers.</span></li>
-<li><b>Color and sound</b><span>Grading, audio cleanup and mixing so the picture and sound match.</span></li>
-<li><b>Short-form</b><span>Vertical edits and reels built for the first second of the scroll.</span></li>
+<li><b><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M3 11h18M7 7l3-4M13 7l3-4"/></svg>Video editing</b><span>Narrative, commercial and social cuts, paced to the story and the soundtrack.</span></li>
+<li><b><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>Motion graphics</b><span>Titles, kinetic type, logo animation and explainers.</span></li>
+<li><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Color and sound</b><span>Grading, audio cleanup and mixing so the picture and sound match.</span></li>
+<li><b><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>Short-form</b><span>Vertical edits and reels built for the first second of the scroll.</span></li>
 </ul>
-</div>
-<div class="two" style="margin-top:clamp(40px,6vw,80px)"><h2>Tools</h2><div class="text"><p>After Effects, Premiere Pro, DaVinci Resolve, Cinema 4D and Final Cut Pro.</p></div></div>
-</section>
-<section id="contact"><div class="two">
-<h2>Have a project in mind?</h2>
-<div class="text"><p>Tell me what you're making and when you need it. I reply within two days.</p><a class="mail" href="mailto:hello@shukanto.com">hello@shukanto.com</a></div>
 </div></section>
+<div class="snap">
+<section id="background"><div class="two">
+<h2>Qualification</h2>
+<ul class="list">
+<li><b>Diploma in Engineering</b><span>Civil Engineering at Daffodil Technical Institute, Dhaka. Currently in the 6th semester.</span></li>
+<li><b>Secondary School Certificate</b><span>Science group at Mirpur Bangla School &amp; College, Dhaka. GPA 4.62 out of 5.00, 2019.</span></li>
+<li><b>Skills</b><div class="chips"><span>Adobe Photoshop</span><span>Microsoft Word</span><span>Microsoft Excel</span><span>Data analysis</span><span>Email</span></div></li>
+<li><b>Languages</b><span>Bengali (excellent) and English (good).</span></li>
+<li><b>Interests</b><span>Music, travel, games and always learning.</span></li>
+</ul>
+</div></section>
+<div class="marq" aria-hidden="true"><div class="mtrack">
+<div class="mset"><span>Video editing</span><span>Motion graphics</span><span>Color grading</span><span>Sound design</span><span>Titles and type</span><span>Short-form</span></div>
+<div class="mset"><span>Video editing</span><span>Motion graphics</span><span>Color grading</span><span>Sound design</span><span>Titles and type</span><span>Short-form</span></div>
+</div></div>
+</div>
+<section class="work" id="projects" aria-label="Projects">
+<div id="stage"><div id="world"><div id="orb"></div>
+<h1 id="headline"><span class="inner"><span style="--i:0">Cutting</span> <span style="--i:1">Stories</span> <span style="--i:2">Into</span> <span style="--i:3">Motion</span></span></h1></div></div>
+<div class="vig"></div>
+<div class="bio chrome"><div class="who"><div class="mono">S</div><b>Shukanto Shishir</b></div><p>Motion designer and video editor. I shape raw footage into pacing, rhythm and feeling. Every project in this sphere is yours to open: tap one to watch it.</p></div>
+<button class="gridbtn chrome" id="gridBtn" aria-label="Toggle grid view"><b></b><b></b><b></b><b></b></button>
+<div class="cue chrome"><s></s><span>Drag to rotate</span></div>
+</section>
+<section id="feedback" class="fb"><div class="fb-in">
+<h2>Feedback</h2>
+<p class="fb-intro">Worked with me or watched the reel? Leave a note. Feedback is reviewed first, and approved notes appear in the slideshow.</p>
+<div class="fb-grid">
+<div class="fb-form" id="fbWrap">
+<form id="fbForm" novalidate>
+<div class="fld"><label for="fbName">Your name</label><input id="fbName" type="text" maxlength="60" autocomplete="name" required></div>
+<fieldset class="fb-who"><legend>How should your name appear?</legend><div class="opts">
+<label class="opt"><input type="radio" name="fbWho" value="name" checked><span>Show my name</span></label>
+<label class="opt"><input type="radio" name="fbWho" value="anon"><span>Post anonymously</span></label>
+</div></fieldset>
+<p class="hint" id="fbHint">Your name will appear next to your feedback.</p>
+<div class="fld"><label for="fbMsg">Your feedback</label><textarea id="fbMsg" rows="5" maxlength="500" required></textarea><span class="count" id="fbCount" aria-hidden="true">0 / 500</span></div>
+<input class="hp" id="fbHp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+<p class="err" id="fbErr" role="alert"></p>
+<button class="btn solid" type="submit" id="fbSend">Send feedback</button>
+</form>
+<div class="done" id="fbDone" tabindex="-1" hidden><span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><h3>Thank you.</h3><p>Your feedback was sent and is waiting for review. If it is approved, it will appear in the slideshow.</p><button type="button" class="btn" id="fbAgain">Send another</button></div>
+</div>
+<div class="fb-show" id="fbShow" role="region" aria-roledescription="carousel" aria-label="Approved feedback">
+<span class="q" aria-hidden="true">&ldquo;</span>
+<div class="fb-track" id="fbTrack"></div>
+<p class="fb-empty" id="fbEmpty" hidden>No feedback has been published yet. Yours could be the first.</p>
+<div class="fb-ctrl" id="fbCtrl" hidden>
+<div class="dots" id="fbDots"></div>
+<button type="button" class="ib" id="fbPrev" aria-label="Previous feedback"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
+<button type="button" class="ib" id="fbPause"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+<button type="button" class="ib" id="fbNext" aria-label="Next feedback"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+</div>
+<p class="fb-demo" id="fbDemo" hidden>Preview samples. They only show on localhost, never on the live site.</p>
+<div class="fb-prog" hidden><i id="fbProg"></i></div>
+</div>
+</div>
+</div></section>
+<section id="contact" class="talk"><div class="talk-in"><h2>LET'S TALK</h2><p>Have a project or an idea? Send me a message.</p><a class="emailme" href="mailto:shukanto99@gmail.com">Email me</a></div></section>
 </main>
-<footer><span>© 2026 Shukanto</span><a href="#projects">Browse all projects</a></footer>
+<footer><span>&copy; 2026 Shukanto Shishir</span><nav aria-label="Footer"><a href="#about">About</a><a href="#services">Services</a><a href="#projects">Projects</a><a href="#feedback">Feedback</a><a href="#contact">Contact</a></nav><div class="soc" id="socials"></div></footer>
 <div id="grid"><div class="rows" id="rows"></div></div>
 <button class="gridclose" id="gridClose">Close</button>
 <div id="lit"><div class="scrim" data-close></div><div class="plate" id="plate">
@@ -69,11 +140,15 @@
 <div class="meta"><div><h2 id="litTitle"></h2><div class="where" id="litWhere"></div></div><p class="note" id="litNote"></p></div>
 </div></div>
 <div id="intro"><div class="fallback"></div><video id="film" muted playsinline webkit-playsinline autoplay preload="auto" disablepictureinpicture></video><div class="veil"></div><button class="skip" id="skip">Skip</button></div>
-<div id="splash"><div class="mark">Shukanto</div><div class="bar"><s id="bar"></s></div><div class="tag">Motion &amp; Video Editor</div></div>
+<div id="splash"><div class="mark">Shukanto Shishir</div><div class="bar"><s id="bar"></s></div><div class="tag">Motion &amp; Video Editor</div></div>
 <div id="dot"></div>
 <script src="js/data.js"></script>
 <script src="js/loader.js"></script>
 <script src="js/projects.js"></script>
 <script src="js/hero.js"></script>
+<script src="js/site.js"></script>
+<script src="js/feedback.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/cinematic.js"></script>
 </body>
 </html>
