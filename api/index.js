@@ -268,11 +268,11 @@ async function route(req, res, send) {
           if (!url) throw new Error("Please enter a valid project URL, for example https://youtube.com/watch?v=...");
           const c = await getContent(), cat = S(b.category, 40);
           if (!(c.categories || []).some(x => x.id === cat)) throw new Error("Please choose a category. Create one first if the list is empty.");
-          const img = parseImage(b.image);
+          const img = b.image ? parseImage(b.image) : null;     /* the picture is optional: the site draws a placeholder card */
           if (c.projects.length >= 100) throw new Error("Project limit reached (100).");
           const pid = crypto.randomBytes(8).toString("hex");
-          await R("SET", "site:img:" + pid, img.type + "|" + img.b64);
-          c.projects.push({ id: pid, title, url, category: cat, image: "/api/index?p=img/" + pid });
+          if (img) await R("SET", "site:img:" + pid, img.type + "|" + img.b64);
+          c.projects.push({ id: pid, title, url, category: cat, image: img ? "/api/index?p=img/" + pid : "" });
           await setContent(c);
           return send(201, c);
         }
