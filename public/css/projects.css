@@ -82,16 +82,19 @@ body.lit .plate{opacity:1}
 @media(max-height:520px) and (orientation:landscape){.bio,.cue{display:none}#headline{font-size:clamp(18px,4.8vh,28px)}.plate{width:min(58vw,calc((100dvh - 80px)*1.5))}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.14s!important}}
 
-/* ===== All Projects grouped by category ===== */
-#grid .cats{width:100%;max-width:1680px;margin:0 auto clamp(28px,4vw,56px);flex:none}
-.cat{margin:0 auto clamp(48px,6.5vw,92px)}
-.cat:last-child{margin-bottom:0}
-.cat-h{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.4vw,46px);line-height:1.1;text-align:center;margin:0 0 clamp(20px,2.8vw,36px)}
+/* ===== All Projects grouped by category (compact so several categories fit on one screen) ===== */
+#grid{padding-top:clamp(60px,8vh,80px)}
+#grid .cats{width:100%;max-width:1680px;margin:0 auto clamp(20px,3vw,36px);flex:none}
+/* the generic page-wide "section" rule adds 150px padding and a divider: not wanted here */
+#grid .cat{padding:0;border:0;margin:0 auto clamp(26px,3.4vw,44px)}
+#grid .cat:last-child{margin-bottom:0}
+.cat-h{font-family:var(--serif);font-weight:400;font-size:clamp(20px,2.1vw,30px);line-height:1.15;text-align:center;margin:0 0 clamp(10px,1.4vw,16px)}
 .cat-h:focus{outline:0}
 /* these beat the generic .rows rules above and in the media queries */
-#grid .cat .rows{grid-template-columns:repeat(3,minmax(0,1fr));max-width:1100px;margin:0 auto}
-#grid .cat.full .rows{grid-template-columns:repeat(auto-fill,minmax(240px,300px));justify-content:center;max-width:1680px}
-.cat-more{display:flex;justify-content:center;margin-top:clamp(20px,2.6vw,32px)}
+#grid .cat .rows{grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1vw,14px);max-width:800px;margin:0 auto}
+#grid .cat.full .rows{grid-template-columns:repeat(auto-fill,minmax(190px,230px));justify-content:center;max-width:1680px}
+.cat-more{display:flex;justify-content:center;margin-top:clamp(10px,1.4vw,16px)}
+.cat-more .btn{min-height:38px;padding:0 20px;font-size:13px}
 .viewall{cursor:pointer}
 .cat-back{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 6px 0 0;font-size:13.5px;color:var(--dim);transition:color .3s}
 .cat-back:hover,.cat-back:focus-visible{color:var(--ink)}
@@ -100,7 +103,8 @@ body.lit .plate{opacity:1}
 #litLink{margin-top:12px;min-height:38px;padding:0 18px;font-size:13px}
 #litLink[hidden]{display:none}
 @media(max-width:640px){
- #grid .cat .rows{grid-template-columns:1fr}
+ #grid .cat .rows{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ #grid .cat .rows figcaption{font-size:10.5px;padding:16px 6px 6px;line-height:1.25}
  #grid .cat.full .rows{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:380px){#grid .cat.full .rows{grid-template-columns:1fr}}
