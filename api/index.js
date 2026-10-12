@@ -37,7 +37,8 @@ const DEFAULTS = {
   },
   contactEmail: "shukanto99@gmail.com",
   social: { instagram: "", linkedin: "", facebook: "", whatsapp: "" },
-  projects: []
+  categories: [],                                 /* [{id, name}] created in the admin panel */
+  projects: []                                    /* [{id, title, url, category, image}] */
 };
 
 const S = (v, n) => typeof v === "string" ? v.trim().slice(0, n) : "";
@@ -50,6 +51,13 @@ function cleanIcon(code) {                       /* accepts a full <svg> or just
   const t = c.match(/<\/?\s*[a-zA-Z][\w:-]*/g) || [];
   if (!t.length || t.some(x => !TAGS.has(x.replace(/[<\/\s]/g, "").toLowerCase()))) return null;
   return c;
+}
+function cleanUrl(v) {                            /* project link: http(s) only; "example.com/x" gets https:// added */
+  v = S(v, 500);
+  if (!v) return null;
+  if (!/^https?:\/\//i.test(v)) { if (/^[a-z][a-z0-9+.-]*:(?!\d)/i.test(v)) return null; v = "https://" + v; }
+  let u; try { u = new URL(v); } catch (e) { return null; }
+  return /^https?:$/.test(u.protocol) && u.hostname.includes(".") ? u.href : null;
 }
 const sections = {                                /* each validates, then updates content */
   about(c, b) {
@@ -226,18 +234,53 @@ async function route(req, res, send) {
         const c = await getContent(); sections[id](c, b); await setContent(c);
         return send(200, c);
       }
-      /* projects: title + picture */
+      /* categories: the headings of the All Projects view */
+      if (area === "categories") {
+        const c = await getContent(); c.categories = Array.isArray(c.categories) ? c.categories : [];
+        if (!id && m === "POST") {
+          const name = S((body() || {}).name, 40);
+          if (!name) throw new Error("Enter a category name.");
+          if (c.categories.length >= 20) throw new Error("Category limit reached (20).");
+          if (c.categories.some(x => x.name.toLowerCase() === name.toLowerCase())) throw new Error("That category already exists.");
+          c.categories.push({ id: newId(), name });
+          await setContent(c); return send(201, c);
+        }
+        const cat = id && c.categories.find(x => x.id === id);
+        if (id && !cat) return send(404, { error: "Not found." });
+        if (id && m === "POST") {                      /* rename */
+          const name = S((body() || {}).name, 40);
+          if (!name) throw new Error("Enter a category name.");
+          if (c.categories.some(x => x.id !== id && x.name.toLowerCase() === name.toLowerCase())) throw new Error("That category already exists.");
+          cat.name = name; await setContent(c); return send(200, c);
+        }
+        if (id && m === "DELETE") {
+          const n = c.projects.filter(x => x.category === id).length;
+          if (n) throw new Error("This category still has " + n + (n === 1 ? " project" : " projects") + ". Move or remove " + (n === 1 ? "it" : "them") + " first.");
+          c.categories = c.categories.filter(x => x.id !== id);
+          await setContent(c); return send(200, c);
+        }
+      }
+      /* projects: title + link + category + picture */
       if (area === "projects") {
         if (!id && m === "POST") {
-          const b = body() || {}, title = S(b.title, 80);
+          const b = body() || {}, title = S(b.title, 80), url = cleanUrl(b.url);
           if (!title) throw new Error("Please enter a project title.");
-          const img = parseImage(b.image), c = await getContent();
+          if (!url) throw new Error("Please enter a valid project URL, for example https://youtube.com/watch?v=...");
+          const c = await getContent(), cat = S(b.category, 40);
+          if (!(c.categories || []).some(x => x.id === cat)) throw new Error("Please choose a category. Create one first if the list is empty.");
+          const img = parseImage(b.image);
           if (c.projects.length >= 100) throw new Error("Project limit reached (100).");
           const pid = crypto.randomBytes(8).toString("hex");
           await R("SET", "site:img:" + pid, img.type + "|" + img.b64);
-          c.projects.push({ id: pid, title, image: "/api/index?p=img/" + pid });
+          c.projects.push({ id: pid, title, url, category: cat, image: "/api/index?p=img/" + pid });
           await setContent(c);
           return send(201, c);
+        }
+        if (id && m === "POST") {                      /* move a project to another category */
+          const c = await getContent(), pr = c.projects.find(x => x.id === id), cat = S((body() || {}).category, 40);
+          if (!pr) return send(404, { error: "Not found." });
+          if (!(c.categories || []).some(x => x.id === cat)) throw new Error("Please choose a category.");
+          pr.category = cat; await setContent(c); return send(200, c);
         }
         if (id && m === "DELETE") {
           const c = await getContent();

@@ -490,13 +490,14 @@ html {
   scroll-padding-top: 0;
 }
 .hero,
-.snap,
 .work,
 #about,
 #services,
+#feedback,
+#social,
 #contact {
   scroll-snap-align: start;
-  scroll-snap-stop: always;
+  scroll-snap-stop: always; /* one scroll = one section; nothing can be skipped */
 }
 footer {
   scroll-snap-align: end;
@@ -508,6 +509,19 @@ footer {
   display: flex;
   align-items: center;
   padding-block: clamp(70px, 9vh, 110px);
+}
+/* the marquee strip is the bottom of the Services page, so Services + marquee = one screen */
+#services {
+  flex-direction: column;
+  align-items: stretch;
+  padding-bottom: 0;
+}
+#services .two {
+  margin: auto;
+}
+#services .marq {
+  flex: none;
+  margin: 0 calc(var(--pad) * -1);
 }
 #about .two,
 #services .two,
@@ -526,15 +540,17 @@ footer {
   align-items: center;
   padding-block: clamp(70px, 9vh, 110px);
 }
-@media (max-width: 760px), (max-height: 600px) {
+/* phones and short screens: sections are taller than the screen, so snap gently instead of forcing */
+@media (max-width: 760px), (max-height: 700px) {
   html {
     scroll-snap-type: y proximity;
   }
   .hero,
-  .snap,
   .work,
   #about,
   #services,
+  #feedback,
+  #social,
   #contact {
     scroll-snap-stop: normal;
   }
@@ -587,8 +603,6 @@ footer {
 }
 
 #feedback {
-  scroll-snap-align: start;
-  scroll-snap-stop: normal;
   min-height: 100vh;
   min-height: 100svh;
   display: flex;

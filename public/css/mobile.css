@@ -113,3 +113,27 @@ header, footer {
 @media (prefers-reduced-motion: reduce) {
   header .links, header .links a, header .menu path { transition: none; }
 }
+/* ---------- normal smooth scrolling on mobile / touch ---------- */
+@media (pointer: coarse), (max-width: 900px) {
+  html {
+    scroll-snap-type: none;       /* no more snapping between sections */
+    scroll-behavior: smooth;      /* menu links still glide to their section */
+    scroll-padding-top: 70px;     /* fixed header doesn't cover the section title after a link tap */
+  }
+  .hero,
+  .snap,
+  .work,
+  #about,
+  #services,
+  #contact,
+  #feedback,
+  #social,
+  footer {
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}

@@ -2,7 +2,6 @@
    Pairs with js/social.js and the #social markup in index.html. Load after theme.css. */
 #social[hidden]{display:none}
 #social{
-  scroll-snap-align:start;scroll-snap-stop:normal;
   min-height:100vh;min-height:100svh;display:flex;align-items:center;
   padding-block:clamp(70px,9vh,110px);background:var(--bg)
 }

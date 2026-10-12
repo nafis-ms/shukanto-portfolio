@@ -82,9 +82,11 @@ html.tt *,html.tt *::before,html.tt *::after{
 :root[data-theme=light] .cue{color:rgba(43,27,18,.55)}
 :root[data-theme=light] .cue s{background:rgba(194,65,12,.25)}
 :root[data-theme=light] .cue s::after{background:var(--navy)}
+/* close buttons (light theme): white border + text on orange (deep orange keeps white text readable) */
 :root[data-theme=light] .gridclose,
-:root[data-theme=light] .close{border-color:rgba(194,65,12,.6);background:rgba(255,248,241,.85);color:var(--navy)}
-:root[data-theme=light] .close:hover{border-color:var(--navy);background:#fff}
+:root[data-theme=light] .close{border-color:#fff;background:var(--navy);color:#fff}
+:root[data-theme=light] .gridclose:hover,
+:root[data-theme=light] .close:hover{border-color:#fff;background:#9A3412}
 :root[data-theme=light] #dot{background:rgba(194,65,12,.85)}
 :root[data-theme=light] #dot.wide{background:rgba(194,65,12,.1);border-color:rgba(194,65,12,.7)}
 :root[data-theme=light] .rows figcaption{color:#EAF4FB}   /* caption sits on a dark gradient over the image */

@@ -645,6 +645,43 @@
     }
 
     /* the icon-code box sets 13px inline */
+
+    select {
+      width: 100%;
+      font: inherit;
+      color: inherit;
+      background: var(--fill);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 11px 14px;
+      cursor: pointer
+    }
+
+    select:focus {
+      outline: 0;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px var(--ring)
+    }
+
+    select:disabled {
+      opacity: .55;
+      cursor: not-allowed
+    }
+
+    select option {
+      background: var(--panel);
+      color: var(--ink)
+    }
+
+    .pj p.pcat {
+      padding: 8px 10px 0
+    }
+
+    .pj p.pcat select {
+      padding: 7px 10px;
+      font-size: 13px;
+      border-radius: 8px
+    }
   </style>
 </head>
 
@@ -849,27 +886,75 @@
         }
 
         /* ---------- Projects ---------- */
+        function sel(opts, val) { var s = h("select"); opts.forEach(function (o) { var e = h("option", { value: o[0], text: o[1] }); if (o[0] === val) e.selected = true; s.appendChild(e) }); return s }
         function Projects(p) {
-          var c = card("Projects", "Each project appears on the rotating sphere. With fewer than 16 projects they repeat around the ball so it stays full.");
+          var cats = D.categories || [], failed = function (e) { toast(e.message, true) };
+          /* ----- categories ----- */
+          var cc = card("Categories", "Projects are grouped by category on the site. Each category shows its first 3 projects, and a View all button opens the rest.");
+          if (!cats.length) cc.appendChild(h("p", { class: "empty", text: "No categories yet. Create one before adding a project." }));
+          cats.forEach(function (k) {
+            var n = D.projects.filter(function (x) { return x.category === k.id }).length;
+            cc.appendChild(h("div", { class: "rowi" }, [
+              h("div", { class: "grow" }, [h("b", { text: k.name }), h("p", { text: n + (n === 1 ? " project" : " projects") })]),
+              h("button", {
+                type: "button", text: "Rename", onclick: function () {
+                  var v = prompt("Rename category", k.name); if (v === null) return;
+                  api("/api/index?p=admin/categories/" + k.id, "POST", { name: v }).then(function (x) { D = x; toast("Category renamed."); show("Projects") }).catch(failed);
+                }
+              }),
+              h("button", {
+                type: "button", class: "del", text: "Remove", onclick: function () {
+                  if (confirm('Remove the category "' + k.name + '"?')) api("/api/index?p=admin/categories/" + k.id, "DELETE").then(function (x) { D = x; toast("Category removed."); show("Projects") }).catch(failed);
+                }
+              })]));
+          });
+          var cn = inp("", { maxlength: 40, placeholder: "New category name" });
+          function addCat() {
+            if (!cn.value.trim()) return toast("Enter a category name.", true);
+            api("/api/index?p=admin/categories", "POST", { name: cn.value }).then(function (x) { D = x; toast("Category added."); show("Projects") }).catch(failed);
+          }
+          cn.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); addCat() } });
+          cc.appendChild(h("div", { class: "addline", style: "margin-top:14px" }, [cn, h("button", { type: "button", text: "Add category", onclick: addCat })]));
+          p.appendChild(cc);
+
+          /* ----- project list ----- */
+          var c = card("Projects", "All projects. Use the menu on a card to move it to another category.");
           if (!D.projects.length) c.appendChild(h("p", { class: "empty", text: "No projects yet. The Projects section is hidden until you add one." }));
-          var g = h("div", { class: "pgrid" });
+          var g = h("div", { class: "pgrid" }), opts = cats.map(function (k) { return [k.id, k.name] });
           D.projects.forEach(function (pr) {
-            g.appendChild(h("div", { class: "pj" }, [h("img", { src: pr.image, alt: "" }), h("div", {}, [h("span", { text: pr.title, title: pr.title }), h("button", {
+            var known = cats.some(function (k) { return k.id === pr.category });
+            var cs = sel((known ? [] : [["", "No category"]]).concat(opts), known ? pr.category : "");
+            cs.setAttribute("aria-label", "Category of " + pr.title);
+            cs.addEventListener("change", function () {
+              if (!cs.value) return;
+              api("/api/index?p=admin/projects/" + pr.id, "POST", { category: cs.value }).then(function (x) { D = x; toast("Project moved."); show("Projects") }).catch(function (e) { toast(e.message, true); show("Projects") });
+            });
+            g.appendChild(h("div", { class: "pj" }, [h("img", { src: pr.image, alt: "" }), h("p", { class: "pcat" }, [cs]), h("div", {}, [h("span", { text: pr.title, title: pr.title }), h("button", {
               type: "button", class: "del", text: "Remove", onclick: function () {
-                if (confirm('Remove "' + pr.title + '"?')) api("/api/index?p=admin/projects/" + pr.id, "DELETE").then(function (x) { D = x; toast("Project removed."); show("Projects") }).catch(function (e) { toast(e.message, true) });
+                if (confirm('Remove "' + pr.title + '"?')) api("/api/index?p=admin/projects/" + pr.id, "DELETE").then(function (x) { D = x; toast("Project removed."); show("Projects") }).catch(failed);
               }
             })])]));
           });
           c.appendChild(g); p.appendChild(c);
-          var f = card("Add a project", "A title and a picture. Landscape (3:2) pictures fit the cards best."), ti = inp("", { maxlength: 80 }), file = h("input", { type: "file", accept: "image/png,image/jpeg,image/webp" }), pv = h("img", { class: "prev", alt: "", hidden: "" }), b;
+
+          /* ----- add a project ----- */
+          var f = card("Add a project", "A title, a link, a category and a picture. Landscape (3:2) pictures fit the cards best."), ti = inp("", { maxlength: 80 }), ur = inp("", { maxlength: 500, inputmode: "url", placeholder: "https://www.youtube.com/watch?v=..." }),
+            cs2 = sel([["", cats.length ? "Choose a category" : "Create a category first"]].concat(opts), ""),
+            file = h("input", { type: "file", accept: "image/png,image/jpeg,image/webp" }), pv = h("img", { class: "prev", alt: "", hidden: "" }), b;
+          if (!cats.length) cs2.disabled = true;
           file.addEventListener("change", function () { var fl = file.files[0]; if (!fl) { pv.hidden = true; return } pv.src = URL.createObjectURL(fl); pv.hidden = false });
-          f.appendChild(fld("Title", ti)); f.appendChild(fld("Picture", h("div", {}, [file, pv])));
+          f.appendChild(fld("Title", ti));
+          f.appendChild(fld("Project URL", ur, "YouTube and Vimeo links and direct .mp4 files play inside the site. Any other link opens in a new tab."));
+          f.appendChild(fld("Category", cs2));
+          f.appendChild(fld("Picture", h("div", {}, [file, pv])));
           b = h("button", {
             type: "button", class: "pri", text: "Add project", onclick: function () {
               if (!ti.value.trim()) return toast("Enter a project title.", true);
+              if (!ur.value.trim()) return toast("Enter the project URL.", true);
+              if (!cs2.value) return toast(cats.length ? "Choose a category." : "Create a category first.", true);
               if (!file.files[0]) return toast("Choose a picture.", true);
               b.disabled = true; b.textContent = "Uploading\u2026";
-              shrink(file.files[0]).then(function (img) { return api("/api/index?p=admin/projects", "POST", { title: ti.value, image: img }) })
+              shrink(file.files[0]).then(function (img) { return api("/api/index?p=admin/projects", "POST", { title: ti.value, url: ur.value, category: cs2.value, image: img }) })
                 .then(function (x) { D = x; toast("Project added."); show("Projects") })
                 .catch(function (e) { toast(e.message, true); b.disabled = false; b.textContent = "Add project" });
             }
