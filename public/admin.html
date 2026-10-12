@@ -696,7 +696,7 @@
         setTheme(curTheme(), false);
         tms.forEach(function (b) { b.addEventListener("click", function () { root.classList.add("tt"); setTheme(curTheme() === "light" ? "dark" : "light", true); setTimeout(function () { root.classList.remove("tt") }, 500) }) });
         addEventListener("storage", function (e) { if (e.key === "theme" && (e.newValue === "light" || e.newValue === "dark")) setTheme(e.newValue, false) });
-        var TABS = ["About", "Services", "Qualification", "Projects", "Feedback", "Contact", "CV"];
+        var TABS = ["About", "Services", "Qualification", "Projects", "Feedback", "Social", "Contact", "CV"];
 
         /* ---------- helpers ---------- */
         function h(t, a, k) { var e = document.createElement(t); a = a || {}; for (var x in a) { if (x === "text") e.textContent = a[x]; else if (x === "class") e.className = a[x]; else if (x.slice(0, 2) === "on") e[x] = a[x]; else e.setAttribute(x, a[x]) } (k || []).forEach(function (c) { if (c) e.appendChild(typeof c === "string" ? document.createTextNode(c) : c) }); return e }
@@ -760,22 +760,27 @@
         function show(n) {
           tab = n; sessionStorage.setItem("atab", n); drawTabs();
           var p = $("#panel"); p.textContent = "";
-          ({ About: About, Services: Services, Qualification: Qual, Projects: Projects, Feedback: Feedback, Contact: Contact, CV: CV })[n](p);
+          ({ About: About, Services: Services, Qualification: Qual, Projects: Projects, Feedback: Feedback, Social: Social, Contact: Contact, CV: CV })[n](p);
         }
         function card(title, lead) { return h("div", { class: "card" }, [h("h2", { text: title }), h("p", { class: "lead", text: lead || "" })]) }
 
         /* ---------- About ---------- */
         function About(p) {
           var a = D.about, c = card("About", "Shown in the About section of the site.");
-          var hd = inp(a.heading, { maxlength: 160 }), pa = area(a.paragraphs.join("\n\n"), { rows: 8 }), em = inp(a.email, { type: "email", maxlength: 120 }), ph = inp(a.phone, { maxlength: 40 }), ad = inp(a.address, { maxlength: 160 });
+          var hd = inp(a.heading, { maxlength: 160 }), pa = area(a.paragraphs.join("\n\n"), { rows: 8 }), em = inp(a.email, { type: "email", maxlength: 120 }), ph = inp(a.phone, { maxlength: 40 }), ad = inp(a.address, { maxlength: 160 }), lg = inp(D.qualification.languages, { maxlength: 200 });
           pa.style.minHeight = "190px";
           c.appendChild(fld("Headline", hd));
           c.appendChild(fld("Paragraphs", pa, "Separate paragraphs with a blank line."));
           c.appendChild(h("div", { class: "row2" }, [fld("Email", em), fld("Phone", ph, "Leave empty to hide it.")]));
           c.appendChild(fld("Address", ad, "Leave empty to hide it."));
+          c.appendChild(fld("Languages", lg, "Leave empty to hide it."));
           c.appendChild(h("button", {
             type: "button", class: "pri", text: "Save about", onclick: function () {
-              saveC("about", { heading: hd.value, paragraphs: pa.value.split(/\n\s*\n/), email: em.value, phone: ph.value, address: ad.value }, "About saved.");
+              var q = D.qualification;
+              saveC("about", { heading: hd.value, paragraphs: pa.value.split(/\n\s*\n/), email: em.value, phone: ph.value, address: ad.value }, "About saved.")
+                .then(function () {
+                  return saveC("qualification", { skills: q.skills, languages: lg.value, interests: q.interests }, "About saved.");
+                });
             }
           }));
           p.appendChild(c);
@@ -808,23 +813,36 @@
             }
           }));
           p.appendChild(f);
+          SkillsCard(p);
         }
 
-        /* ---------- Qualification ---------- */
-        function Qual(p) {
-          var q = D.qualification, skills = q.skills.slice(), c = card("Qualification", "Skills, languages and interests. Education entries are not editable here.");
+        function SkillsCard(p) {
+          var skills = D.qualification.skills.slice(), c = card("Skills", "Shown as chips at the bottom of the Services section.");
           var chips = h("div", { class: "chips" }), add = inp("", { maxlength: 40, placeholder: "Add a skill" });
           function draw() { chips.textContent = ""; skills.forEach(function (s, i) { chips.appendChild(h("span", { class: "chip" }, [s, h("button", { type: "button", "aria-label": "Remove " + s, text: "\u00d7", onclick: function () { skills.splice(i, 1); draw() } })])) }); if (!skills.length) chips.appendChild(h("span", { class: "empty", text: "No skills yet." })) }
           function push() { var v = add.value.trim(); if (v) { skills.push(v); add.value = ""; draw() } add.focus() }
           add.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); push() } });
           draw();
-          c.appendChild(fld("Skills", h("div", {}, [chips, h("div", { class: "addline" }, [add, h("button", { type: "button", text: "Add", onclick: push })])])));
-          var lg = inp(q.languages, { maxlength: 200 }), it = inp(q.interests, { maxlength: 200 });
-          c.appendChild(fld("Languages", lg, "Leave empty to hide.")); c.appendChild(fld("Interests", it, "Leave empty to hide."));
+          c.appendChild(h("div", {}, [chips, h("div", { class: "addline" }, [add, h("button", { type: "button", text: "Add", onclick: push })])]));
+          c.appendChild(h("button", {
+            type: "button", class: "pri", style: "margin-top:16px", text: "Save skills", onclick: function () {
+              var v = add.value.trim(); if (v) { skills.push(v); add.value = ""; draw() }
+              var cur = D.qualification;
+              saveC("qualification", { skills: skills, languages: cur.languages, interests: cur.interests }, "Skills saved.");
+            }
+          }));
+          p.appendChild(c);
+        }
+
+        /* ---------- Qualification ---------- */
+        function Qual(p) {
+          var q = D.qualification, c = card("Qualification", "Interests. Education entries are not editable here.");
+          var it = inp(q.interests, { maxlength: 200 });
+          c.appendChild(fld("Interests", it, "Leave empty to hide."));
           c.appendChild(h("button", {
             type: "button", class: "pri", text: "Save qualification", onclick: function () {
-              var v = add.value.trim(); if (v) { skills.push(v); add.value = ""; draw() }
-              saveC("qualification", { skills: skills, languages: lg.value, interests: it.value }, "Qualification saved.");
+              var cur = D.qualification;
+              saveC("qualification", { skills: cur.skills, languages: cur.languages, interests: it.value }, "Qualification saved.");
             }
           }));
           p.appendChild(c);
@@ -935,6 +953,25 @@
             }
           });
           f.appendChild(b); p.appendChild(f);
+        }
+
+        /* ---------- Social ---------- */
+        function Social(p) {
+          var s = D.social || {}, c = card("Social links", "Shown in the Social section, just above Contact. Leave a field empty to hide that icon. If every field is empty, the whole section is hidden.");
+          var ig = inp(s.instagram, { maxlength: 300, placeholder: "https://instagram.com/yourname" }),
+            li = inp(s.linkedin, { maxlength: 300, placeholder: "https://linkedin.com/in/yourname" }),
+            fb = inp(s.facebook, { maxlength: 300, placeholder: "https://facebook.com/yourname" }),
+            wa = inp(s.whatsapp ? "+" + s.whatsapp : "", { maxlength: 40, placeholder: "+8801712345678", inputmode: "tel" });
+          c.appendChild(fld("Instagram", ig, "Paste your profile link."));
+          c.appendChild(fld("LinkedIn", li, "Paste your profile link."));
+          c.appendChild(fld("Facebook", fb, "Paste your profile or page link."));
+          c.appendChild(fld("WhatsApp number", wa, "Include the country code (Bangladesh is +880) and leave out the leading 0. Tapping the icon opens a WhatsApp chat with this number."));
+          c.appendChild(h("button", {
+            type: "button", class: "pri", text: "Save social links", onclick: function () {
+              saveC("social", { instagram: ig.value, linkedin: li.value, facebook: fb.value, whatsapp: wa.value }, "Social links saved.", function () { show("Social") });
+            }
+          }));
+          p.appendChild(c);
         }
 
         /* ---------- Contact ---------- */

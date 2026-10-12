@@ -24,10 +24,11 @@
 [data-fx=focus].in .c{animation:focus .9s var(--e) calc(var(--b,0s) + var(--i)*30ms) backwards}
 @keyframes focus{from{opacity:0;filter:blur(10px);transform:translateY(10px) scale(1.07)}}
 
-/* 3. SERVICES HEADLINE: wide tracking collapses into place */
-[data-fx=track]:not(.in){letter-spacing:.4em;opacity:0;filter:blur(10px)}
+/* 3. SERVICES HEADLINE: tracking collapses into place (kept on one line so it never wraps mid-animation) */
+[data-fx=track]{white-space:nowrap}
+[data-fx=track]:not(.in){letter-spacing:.1em;opacity:0;filter:blur(10px)}
 [data-fx=track].in{animation:track 1.7s var(--e) backwards}
-@keyframes track{from{letter-spacing:.4em;opacity:0;filter:blur(10px)}}
+@keyframes track{from{letter-spacing:.1em;opacity:0;filter:blur(10px)}}
 
 /* 4. QUALIFICATION HEADLINE: 3D letter flip */
 [data-fx=flip] .w{perspective:700px}

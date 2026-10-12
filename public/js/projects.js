@@ -14,7 +14,7 @@ function ph(i,t){
 }
 var U=[],cards=[],cimg=[],thumbs=[],R=300,persp=1150;
 for(var i=0;i<N;i++){
- var y=1-(i/(N-1))*2,rad=Math.sqrt(Math.max(0,1-y*y)),th=i*GA,x=Math.cos(th)*rad,z=Math.sin(th)*rad;
+ var y=1-(2*i+1)/N,rad=Math.sqrt(Math.max(0,1-y*y)),th=i*GA+PI/2,x=Math.cos(th)*rad,z=Math.sin(th)*rad;
  U.push({x:x,y:y,z:z,lat:Math.asin(y)*180/PI,lon:Math.atan2(x,z)*180/PI});
  thumbs[i]=P[i][3]||ph(i,P[i][0]);
  var c=document.createElement("button");c.className="card";c.dataset.idx=i;c.setAttribute("aria-label","Open "+P[i][0]);

@@ -31,6 +31,13 @@ body.gridview #grid{opacity:1;pointer-events:auto}
 .rows figure:hover img{transform:scale(1.05);opacity:1}
 .rows figcaption{position:absolute;left:0;right:0;bottom:0;font-family:var(--serif);font-size:15px;background:linear-gradient(transparent,rgba(0,0,0,.82));padding:26px 14px 12px;opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s}
 .rows figure:hover figcaption{opacity:1;transform:none}
+/* slim marquee strip at the bottom of the grid view (All Projects) */
+#grid{display:flex;flex-direction:column;padding-bottom:0}
+#grid .rows{width:100%;flex:none;margin-bottom:clamp(28px,4vw,56px)}
+.gmarq{flex:none;margin:auto calc(var(--pad)*-1) 0;overflow:hidden;border-top:1px solid var(--line);padding:clamp(8px,1.1vw,14px) 0}
+.gmarq .mset span{font-size:clamp(16px,1.9vw,26px);padding:0 clamp(14px,1.8vw,24px)}
+.gmarq .mset span::after{margin-left:clamp(14px,1.8vw,24px)}
+.gmarq:hover .mtrack{animation-play-state:paused}
 .chrome{opacity:0}
 .work.seen .chrome{opacity:1;transition:opacity 1.2s .15s}
 .bio{position:absolute;left:calc(var(--pad) + var(--sl));bottom:calc(var(--pad) + var(--sb));z-index:3;max-width:min(320px,46vw);transition:opacity .5s,transform .5s}

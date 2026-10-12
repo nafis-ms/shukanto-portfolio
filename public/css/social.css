@@ -1,0 +1,55 @@
+/* Social section: sits between Feedback and Contact. Links come from the admin panel (Social tab).
+   Pairs with js/social.js and the #social markup in index.html. Load after theme.css. */
+#social[hidden]{display:none}
+#social{
+  scroll-snap-align:start;scroll-snap-stop:normal;
+  min-height:100vh;min-height:100svh;display:flex;align-items:center;
+  padding-block:clamp(70px,9vh,110px);background:var(--bg)
+}
+#social .two{width:100%;align-items:center}
+.sx-lead{max-width:34ch;margin-top:16px;color:var(--dim);font-size:clamp(15px,1.4vw,18px)}
+
+.sx-list{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.sx-list li[hidden]{display:none}
+.sx-card{
+  display:flex;align-items:center;gap:16px;min-height:92px;padding:18px 20px;
+  border:1px solid var(--line);border-radius:14px;color:var(--ink);text-decoration:none;
+  background:rgba(15,76,117,.14);
+  transition:transform .35s var(--e),border-color .35s,background .35s,box-shadow .35s
+}
+.sx-ico{
+  display:grid;place-items:center;width:48px;height:48px;flex:none;border-radius:50%;
+  border:1px solid var(--line);transition:background .35s,border-color .35s
+}
+.sx-ico svg{width:22px;height:22px;fill:none;stroke:var(--blue);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:stroke .35s}
+.sx-tx{min-width:0}
+.sx-tx b{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(19px,1.8vw,24px);line-height:1.1}
+.sx-tx small{display:block;margin-top:4px;font-size:13px;color:var(--dim)}
+.sx-go{
+  width:18px;height:18px;margin-left:auto;flex:none;fill:none;stroke:var(--dim);stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round;transition:transform .4s var(--e),stroke .3s
+}
+.sx-card:focus-visible{outline-offset:3px}
+@media (hover:hover){
+  .sx-card:hover{
+    transform:translateY(-4px);border-color:var(--blue);background:rgba(50,130,184,.2);
+    box-shadow:0 10px 26px rgba(50,130,184,.3)
+  }
+  .sx-card:hover .sx-ico{background:var(--ice);border-color:var(--ice)}
+  .sx-card:hover .sx-ico svg{stroke:var(--bg)}
+  .sx-card:hover .sx-go{transform:translate(3px,-3px);stroke:var(--ice)}
+}
+.sx-card:active{transform:scale(.98)}
+
+/* light theme */
+:root[data-theme=light] .sx-card{background:rgba(254,215,170,.35)}
+:root[data-theme=light] .sx-ico svg{stroke:var(--navy)}
+@media (hover:hover){
+  :root[data-theme=light] .sx-card:hover{background:rgba(254,215,170,.6);border-color:var(--blue);box-shadow:0 10px 26px rgba(194,65,12,.22)}
+  :root[data-theme=light] .sx-card:hover .sx-ico{background:var(--navy);border-color:var(--navy)}
+  :root[data-theme=light] .sx-card:hover .sx-ico svg{stroke:#fff}
+  :root[data-theme=light] .sx-card:hover .sx-go{stroke:var(--navy)}
+}
+
+@media (max-width:640px){.sx-list{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.sx-card,.sx-go{transition:none}.sx-card:hover{transform:none}}

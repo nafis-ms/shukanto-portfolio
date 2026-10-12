@@ -36,6 +36,7 @@ const DEFAULTS = {
     interests: "Music, travel, games and always learning."
   },
   contactEmail: "shukanto99@gmail.com",
+  social: { instagram: "", linkedin: "", facebook: "", whatsapp: "" },
   projects: []
 };
 
@@ -73,6 +74,27 @@ const sections = {                                /* each validates, then update
     if (!Array.isArray(b.skills) || b.skills.length > 30) throw new Error("Invalid skills (30 max).");
     c.qualification = { skills: b.skills.map(x => S(x, 40)).filter(Boolean), languages: S(b.languages, 200), interests: S(b.interests, 200) };
   },
+  social(c, b) {                                   /* Instagram / LinkedIn / Facebook links + WhatsApp number; empty = hidden on the site */
+    const NAMES = { instagram: "Instagram", linkedin: "LinkedIn", facebook: "Facebook" };
+    const HOSTS = { instagram: /(^|\.)instagram\.com$/, linkedin: /(^|\.)linkedin\.com$/, facebook: /(^|\.)(facebook\.com|fb\.com|fb\.me)$/ };
+    const o = {};
+    for (const k of Object.keys(NAMES)) {
+      let v = S(b[k], 300);
+      if (!v) { o[k] = ""; continue; }
+      if (!/^[a-z][a-z0-9+.-]*:/i.test(v)) v = "https://" + v;
+      let url; try { url = new URL(v); } catch (e) { throw new Error("The " + NAMES[k] + " link is not a valid web address. Paste the full profile link."); }
+      if (!/^https?:$/.test(url.protocol) || !HOSTS[k].test(url.hostname.toLowerCase())) throw new Error("The " + NAMES[k] + " link must be a " + NAMES[k] + " address.");
+      url.protocol = "https:"; o[k] = url.href;
+    }
+    let w = S(b.whatsapp, 80);
+    if (w) {
+      const m = /wa\.me\/(\d+)/i.exec(w), d = (m ? m[1] : w).replace(/\D/g, "");
+      if (d.length < 8 || d.length > 15 || d[0] === "0") throw new Error("Enter the WhatsApp number with its country code and no leading 0, for example +880 1712 345678.");
+      w = d;
+    }
+    o.whatsapp = w;
+    c.social = o;
+  },
   contact(c, b) {
     const e = S(b.email, 120);
     if (!EMAIL.test(e)) throw new Error("Enter a valid email address.");
@@ -99,6 +121,12 @@ async function allFb() {
   return out.sort((x, y) => y.createdAt.localeCompare(x.createdAt));
 }
 
+/* CV (PDF): stored in Redis as base64 chunks, because Upstash limits the size of a single request.
+   Content only holds {name, url}; the file itself is served by GET /api/index?p=cv */
+const CV_CHUNK = 600000, CV_MAX_B64 = 4200000;   /* ~3 MB file; Vercel's request body limit is 4.5 MB */
+async function cvMeta() { try { return JSON.parse((await R("GET", "site:cv:meta")) || "null"); } catch (e) { return null; } }
+async function delCvChunks(from, to) { for (let i = from; i < to; i++) await R("DEL", "site:cv:" + i); }
+
 async function route(req, res, send) {
   const u = new URL(req.url, "http://x"), q = u.searchParams, m = req.method;
   /* vercel.json rewrites /api/anything to this file as ?p=anything */
@@ -119,6 +147,22 @@ async function route(req, res, send) {
     const i = v.indexOf("|");
     res.statusCode = 200; res.setHeader("Content-Type", v.slice(0, i)); res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
     return res.end(Buffer.from(v.slice(i + 1), "base64"));
+  }
+  /* public: the CV download */
+  if (p === "/api/cv" && m === "GET") {
+    const meta = await cvMeta();
+    if (!meta || !meta.n) { res.statusCode = 404; return res.end("Not found"); }
+    let b64 = "";
+    for (let i = 0; i < meta.n; i++) {
+      const part = await R("GET", "site:cv:" + i);
+      if (!part) { res.statusCode = 404; return res.end("Not found"); }
+      b64 += part;
+    }
+    const fname = String(meta.name || "CV.pdf").replace(/[^\w.\- ]/g, "_");
+    res.statusCode = 200; res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", 'attachment; filename="' + fname + '"');
+    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");   /* the link carries a version, so a new upload gets a new URL */
+    return res.end(Buffer.from(b64, "base64"));
   }
   /* public: submit + read approved feedback */
   if (p === "/api/feedback") {
@@ -153,6 +197,29 @@ async function route(req, res, send) {
     try {
       /* site content */
       if (area === "content" && !id && m === "GET") return send(200, await getContent());
+      /* CV: upload / replace ({name, data: PDF data URL}) or remove (empty data) */
+      if (area === "content" && id === "cv" && m === "POST") {
+        const b = body(); if (!b) return send(400, { error: "Invalid input." });
+        const c = await getContent(), old = await cvMeta(), oldN = (old && old.n) || 0;
+        if (!b.data) {
+          delete c.cv; await setContent(c); await delCvChunks(0, oldN); await R("DEL", "site:cv:meta");
+          return send(200, c);
+        }
+        const mm = /^data:application\/pdf;base64,([A-Za-z0-9+/=]+)$/.exec(typeof b.data === "string" ? b.data : "");
+        if (!mm) throw new Error("Please choose a PDF file.");
+        const b64 = mm[1];
+        if (b64.length > CV_MAX_B64) throw new Error("That PDF is too large (3 MB max).");
+        if (Buffer.from(b64.slice(0, 8), "base64").toString("latin1").slice(0, 4) !== "%PDF") throw new Error("That file is not a valid PDF.");
+        let name = S(b.name, 120).replace(/[\\\/]/g, "_") || "CV.pdf";
+        if (!/\.pdf$/i.test(name)) name += ".pdf";
+        const n = Math.ceil(b64.length / CV_CHUNK);
+        for (let i = 0; i < n; i++) await R("SET", "site:cv:" + i, b64.slice(i * CV_CHUNK, (i + 1) * CV_CHUNK));
+        await R("SET", "site:cv:meta", JSON.stringify({ name, n }));
+        await delCvChunks(n, oldN);                       /* drop leftover chunks of a longer, older file */
+        c.cv = { name, url: "/api/index?p=cv&v=" + Date.now().toString(36) };
+        await setContent(c);
+        return send(200, c);
+      }
       if (area === "content" && id && m === "POST") {
         if (!sections[id]) return send(404, { error: "Unknown section." });
         const b = body(); if (!b) return send(400, { error: "Invalid input." });

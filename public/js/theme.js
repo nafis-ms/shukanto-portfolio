@@ -123,8 +123,9 @@ html.tt *,html.tt *::before,html.tt *::after{
 /* loader, intro film, letterbox bars and the grain stay dark in both modes (cinematic) */
 :root[data-theme=light] #splash,
 :root[data-theme=light] #intro,
-:root[data-theme=light] .veil,
-:root[data-theme=light] .lbx{background:#000}
+:root[data-theme=light] .veil{background:#000}
+/* letterbox bars follow the light theme instead of staying black (change the colour here) */
+:root[data-theme=light] .lbx{background:var(--deep)}
 :root[data-theme=light] #splash,
 :root[data-theme=light] #intro{color:#EAF4FB}
 :root[data-theme=light] .fallback{background:radial-gradient(circle at 50% 46%,#0F4C75 0%,#000405 45%,#000 75%)}
@@ -136,6 +137,9 @@ html.tt *,html.tt *::before,html.tt *::after{
 :root[data-theme=light] header nav a{color:var(--ink)}
 :root[data-theme=light] .tmode{color:var(--ink);border-color:rgba(43,27,18,.45)}
 :root[data-theme=light] .tmode:hover{background:rgba(194,65,12,.12);border-color:var(--navy)}
+:root[data-theme=light] header nav a.cvbtn{color:var(--ink);border-color:rgba(43,27,18,.45)}
+:root[data-theme=light] header nav a.cvbtn:hover,
+:root[data-theme=light] header nav a.cvbtn:focus-visible{background:rgba(194,65,12,.12);border-color:var(--navy)}
 :root[data-theme=light] #dot{mix-blend-mode:normal;background:rgba(194,65,12,.85)}
 :root[data-theme=light] #dot.wide{background:rgba(194,65,12,.1);border-color:rgba(194,65,12,.7)}
 
