@@ -673,6 +673,15 @@
       color: var(--ink)
     }
 
+    .pj p.noimg {
+      aspect-ratio: 3/2;
+      display: grid;
+      place-items: center;
+      background: var(--fill);
+      color: var(--dim);
+      font-size: 13px
+    }
+
     .pj p.pcat {
       padding: 8px 10px 0
     }
@@ -929,7 +938,7 @@
               if (!cs.value) return;
               api("/api/index?p=admin/projects/" + pr.id, "POST", { category: cs.value }).then(function (x) { D = x; toast("Project moved."); show("Projects") }).catch(function (e) { toast(e.message, true); show("Projects") });
             });
-            g.appendChild(h("div", { class: "pj" }, [h("img", { src: pr.image, alt: "" }), h("p", { class: "pcat" }, [cs]), h("div", {}, [h("span", { text: pr.title, title: pr.title }), h("button", {
+            g.appendChild(h("div", { class: "pj" }, [(pr.image ? h("img", { src: pr.image, alt: "" }) : h("p", { class: "noimg", text: "No picture" })), h("p", { class: "pcat" }, [cs]), h("div", {}, [h("span", { text: pr.title, title: pr.title }), h("button", {
               type: "button", class: "del", text: "Remove", onclick: function () {
                 if (confirm('Remove "' + pr.title + '"?')) api("/api/index?p=admin/projects/" + pr.id, "DELETE").then(function (x) { D = x; toast("Project removed."); show("Projects") }).catch(failed);
               }
@@ -938,7 +947,7 @@
           c.appendChild(g); p.appendChild(c);
 
           /* ----- add a project ----- */
-          var f = card("Add a project", "A title, a link, a category and a picture. Landscape (3:2) pictures fit the cards best."), ti = inp("", { maxlength: 80 }), ur = inp("", { maxlength: 500, inputmode: "url", placeholder: "https://www.youtube.com/watch?v=..." }),
+          var f = card("Add a project", "A title, a link and a category are required. The picture is optional (without one the site shows a plain placeholder card). Landscape (3:2) pictures fit best."), ti = inp("", { maxlength: 80 }), ur = inp("", { maxlength: 500, inputmode: "url", placeholder: "https://www.youtube.com/watch?v=..." }),
             cs2 = sel([["", cats.length ? "Choose a category" : "Create a category first"]].concat(opts), ""),
             file = h("input", { type: "file", accept: "image/png,image/jpeg,image/webp" }), pv = h("img", { class: "prev", alt: "", hidden: "" }), b;
           if (!cats.length) cs2.disabled = true;
@@ -946,15 +955,14 @@
           f.appendChild(fld("Title", ti));
           f.appendChild(fld("Project URL", ur, "YouTube and Vimeo links and direct .mp4 files play inside the site. Any other link opens in a new tab."));
           f.appendChild(fld("Category", cs2));
-          f.appendChild(fld("Picture", h("div", {}, [file, pv])));
+          f.appendChild(fld("Picture (optional)", h("div", {}, [file, pv])));
           b = h("button", {
             type: "button", class: "pri", text: "Add project", onclick: function () {
               if (!ti.value.trim()) return toast("Enter a project title.", true);
               if (!ur.value.trim()) return toast("Enter the project URL.", true);
               if (!cs2.value) return toast(cats.length ? "Choose a category." : "Create a category first.", true);
-              if (!file.files[0]) return toast("Choose a picture.", true);
               b.disabled = true; b.textContent = "Uploading\u2026";
-              shrink(file.files[0]).then(function (img) { return api("/api/index?p=admin/projects", "POST", { title: ti.value, url: ur.value, category: cs2.value, image: img }) })
+              (file.files[0] ? shrink(file.files[0]) : Promise.resolve("")).then(function (img) { return api("/api/index?p=admin/projects", "POST", { title: ti.value, url: ur.value, category: cs2.value, image: img }) })
                 .then(function (x) { D = x; toast("Project added."); show("Projects") })
                 .catch(function (e) { toast(e.message, true); b.disabled = false; b.textContent = "Add project" });
             }
