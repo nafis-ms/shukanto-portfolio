@@ -68,9 +68,11 @@ var gr=document.createElement("div");
 gr.className="grain";gr.setAttribute("aria-hidden","true");body.appendChild(gr);
 
 /* play when visible, reset when out of view so it replays */
+/* phones and tablets: each effect plays once; desktop replays it when you scroll back */
+var once=matchMedia("(pointer:coarse),(max-width:900px)").matches;
 var io=new IntersectionObserver(function(en){en.forEach(function(e){
- if(e.isIntersecting&&e.intersectionRatio>=.3)e.target.classList.add("in");
- else if(!e.isIntersecting)e.target.classList.remove("in");
+ if(e.isIntersecting&&e.intersectionRatio>=.3){e.target.classList.add("in");if(once)io.unobserve(e.target)}
+ else if(!e.isIntersecting&&!once)e.target.classList.remove("in");
 })},{threshold:[0,.3],rootMargin:"0px 0px -6% 0px"});
 
 /* wait for the loader to finish before the first scene */
