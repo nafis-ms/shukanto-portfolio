@@ -1,0 +1,176 @@
+/* Skill levels section (sits under Projects). Bars come from the admin panel: Content > Skill Levels.
+   Pairs with js/skillbars.js. Load after theme.css / skill.css / mobile.css.
+   Colours follow the site theme (--navy / --blue / --ice), so dark and light mode work without extra rules.
+   Want a different accent (for example the green in your reference)? Change --skx-1 / --skx-2 / --skx-3 below. */
+
+#skillset{
+  --skx-1:var(--navy);--skx-2:var(--blue);--skx-3:var(--ice);
+  --skx-glow:color-mix(in srgb,var(--blue) 55%,transparent);
+  --skx-track:rgba(187,225,250,.09);
+  --skx-card-a:rgba(15,76,117,.34);--skx-card-b:rgba(0,4,5,.78);
+  --skx-edge:rgba(50,130,184,.38);
+  --skx-badge-bg:rgba(50,130,184,.14);--skx-badge-ink:var(--ice);
+  --skx-e:cubic-bezier(.16,1,.3,1);
+  position:relative;overflow:hidden;background:var(--bg,#000405);
+  min-height:100vh;min-height:100svh;display:flex;align-items:center;
+  padding-block:clamp(70px,9vh,110px);
+  scroll-snap-align:start;scroll-snap-stop:always
+}
+#skillset[hidden],.skx-nav[hidden]{display:none!important}
+
+/* ---------- ambient backdrop ---------- */
+.skx-bg{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.skx-bg::before{
+  content:"";position:absolute;inset:0;opacity:0;transition:opacity 1.6s ease .2s;
+  background-image:linear-gradient(rgba(187,225,250,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(187,225,250,.05) 1px,transparent 1px);
+  background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 70% at 50% 45%,#000 10%,transparent 75%);
+  mask-image:radial-gradient(ellipse 70% 70% at 50% 45%,#000 10%,transparent 75%)
+}
+.skx-bg i{
+  position:absolute;width:min(46vw,520px);aspect-ratio:1;border-radius:50%;filter:blur(90px);opacity:0;
+  transition:opacity 1.8s ease;will-change:transform
+}
+.skx-bg i:nth-child(1){left:-8%;top:-12%;background:radial-gradient(circle,var(--skx-2),transparent 68%)}
+.skx-bg i:nth-child(2){right:-10%;bottom:-18%;background:radial-gradient(circle,var(--skx-1),transparent 68%)}
+#skillset.in .skx-bg::before{opacity:1}
+#skillset.in .skx-bg i{opacity:.28}
+#skillset.in .skx-bg i:nth-child(1){animation:skxDrift 16s ease-in-out infinite alternate}
+#skillset.in .skx-bg i:nth-child(2){animation:skxDrift 20s ease-in-out -6s infinite alternate-reverse}
+@keyframes skxDrift{to{transform:translate3d(8vw,6vh,0) scale(1.18)}}
+
+.skx-in{position:relative;z-index:1;width:100%;max-width:1000px;margin:0 auto}
+
+/* ---------- heading ---------- */
+.skx-eye{
+  display:inline-flex;align-items:center;gap:12px;margin-bottom:14px;
+  font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--skx-2);font-weight:500;
+  opacity:0;transform:translateX(-18px);transition:opacity .8s var(--skx-e),transform .8s var(--skx-e)
+}
+.skx-eye::before{content:"";width:34px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .9s var(--skx-e) .15s}
+#skillset.in .skx-eye{opacity:1;transform:none}
+#skillset.in .skx-eye::before{transform:none}
+.skx-h2{overflow:hidden;padding:.12em .04em;margin:-.12em -.04em 0}
+.skx-h2 span{display:block;transform:translateY(112%) rotate(4deg);transform-origin:0 100%;opacity:0}
+#skillset.in .skx-h2 span{animation:skxRise 1.15s var(--skx-e) .1s both}
+@keyframes skxRise{from{transform:translateY(112%) rotate(4deg);opacity:0}to{transform:none;opacity:1}}
+.skx-lead{
+  max-width:56ch;margin-top:14px;color:var(--dim);font-size:clamp(15px,1.4vw,18px);
+  opacity:0;filter:blur(8px);transform:translateY(12px);
+  transition:opacity .9s var(--skx-e) .35s,filter .9s var(--skx-e) .35s,transform .9s var(--skx-e) .35s
+}
+#skillset.in .skx-lead{opacity:1;filter:none;transform:none}
+
+/* ---------- the box ---------- */
+.skx-card{
+  --mx:50%;--my:0%;
+  position:relative;isolation:isolate;overflow:hidden;margin-top:clamp(26px,3.6vw,46px);
+  padding:clamp(10px,1.6vw,20px) clamp(20px,3.2vw,44px);
+  border:1px solid var(--skx-edge);border-radius:20px;
+  background:linear-gradient(155deg,var(--skx-card-a),var(--skx-card-b) 62%);
+  box-shadow:inset 0 0 0 1px rgba(187,225,250,.05),0 30px 70px -26px rgba(0,0,0,.85),0 0 0 rgba(50,130,184,0);
+  opacity:0;transform:translateY(54px) scale(.95);filter:blur(14px);
+  transition:opacity 1s var(--skx-e) .25s,transform 1.2s var(--skx-e) .25s,filter 1s var(--skx-e) .25s,box-shadow 1.4s ease .6s
+}
+#skillset.in .skx-card{
+  opacity:1;transform:none;filter:none;
+  box-shadow:inset 0 0 0 1px rgba(187,225,250,.05),0 30px 70px -26px rgba(0,0,0,.85),0 0 60px -18px var(--skx-glow)
+}
+/* pointer spotlight */
+.skx-card::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.9;
+  background:radial-gradient(420px circle at var(--mx) var(--my),color-mix(in srgb,var(--blue) 20%,transparent),transparent 62%)
+}
+/* one light beam sweeps the box as it appears */
+.skx-card::after{
+  content:"";position:absolute;top:-10%;bottom:-10%;left:0;width:34%;z-index:3;pointer-events:none;opacity:0;
+  background:linear-gradient(100deg,transparent,rgba(187,225,250,.2),rgba(255,255,255,.34),rgba(187,225,250,.2),transparent);
+  transform:translateX(-130%) skewX(-18deg)
+}
+#skillset.in .skx-card::after{animation:skxBeam 1.9s cubic-bezier(.5,0,.2,1) .55s both}
+@keyframes skxBeam{0%{opacity:0;transform:translateX(-130%) skewX(-18deg)}12%{opacity:1}88%{opacity:1}100%{opacity:0;transform:translateX(340%) skewX(-18deg)}}
+
+/* ---------- rows ---------- */
+.skx-list{margin:0;padding:0}
+.skx-row{
+  position:relative;padding:clamp(10px,1.9vh,20px) 0;
+  opacity:0;transform:translateX(-28px);filter:blur(6px);
+  transition:opacity .8s var(--skx-e),transform .8s var(--skx-e),filter .8s var(--skx-e);
+  transition-delay:calc(.55s + var(--i,0)*.11s)
+}
+#skillset.in .skx-row{opacity:1;transform:none;filter:none}
+.skx-row+.skx-row::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(187,225,250,.1),transparent)
+}
+.skx-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:11px}
+.skx-name{margin:0;font-family:var(--sans);font-weight:400;font-size:clamp(15px,1.35vw,18px);line-height:1.3;color:var(--ink);letter-spacing:.01em;overflow-wrap:anywhere}
+.skx-pct{
+  flex:none;min-width:3.9em;text-align:center;padding:3px 10px;border-radius:6px;
+  font-size:13px;line-height:1.5;font-weight:600;letter-spacing:.04em;font-variant-numeric:tabular-nums;
+  color:var(--skx-badge-ink);background:var(--skx-badge-bg);border:1px solid var(--skx-2);
+  transition:background .35s,color .35s,box-shadow .35s
+}
+.skx-track{position:relative;height:8px;border-radius:99px;background:var(--skx-track);box-shadow:inset 0 1px 2px rgba(0,0,0,.4)}
+.skx-fill{
+  position:absolute;left:0;top:0;bottom:0;border-radius:inherit;
+  width:calc(var(--lv,0) * 1% * var(--p,0));
+  background:linear-gradient(90deg,var(--skx-1),var(--skx-2) 58%,var(--skx-3));
+  box-shadow:0 0 16px -2px var(--skx-glow);transition:box-shadow .4s
+}
+/* glossy sheen that keeps travelling along the bar once it has filled */
+.skx-fill i{position:absolute;inset:0;border-radius:inherit;overflow:hidden}
+.skx-fill i::after{
+  content:"";position:absolute;top:0;bottom:0;left:0;width:40%;opacity:0;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:translateX(-120%) skewX(-20deg)
+}
+.skx-row.skx-done .skx-fill i::after{animation:skxSheen 3.6s ease-in-out calc(var(--i,0)*.25s + .4s) infinite}
+@keyframes skxSheen{0%{opacity:0;transform:translateX(-120%) skewX(-20deg)}12%{opacity:1}42%{opacity:0;transform:translateX(340%) skewX(-20deg)}100%{opacity:0;transform:translateX(340%) skewX(-20deg)}}
+/* glowing head of the bar */
+.skx-fill::after{
+  content:"";position:absolute;right:-6px;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;
+  background:var(--skx-3);box-shadow:0 0 0 3px color-mix(in srgb,var(--skx-2) 35%,transparent),0 0 16px 3px var(--skx-glow);
+  opacity:0;transform:scale(.4);transition:opacity .5s,transform .5s var(--skx-e)
+}
+.skx-row.skx-run .skx-fill::after,.skx-row.skx-done .skx-fill::after{opacity:1;transform:none}
+.skx-row.skx-done .skx-fill::after{animation:skxPulse 2.4s ease-in-out infinite}
+@keyframes skxPulse{50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--skx-2) 12%,transparent),0 0 22px 5px var(--skx-glow)}}
+.skx-row[data-lv="0"] .skx-fill::after{display:none}
+
+@media (hover:hover){
+  .skx-row.skx-done:hover{transform:translateX(7px)}
+  .skx-row:hover .skx-pct{background:var(--skx-2);color:#fff;box-shadow:0 0 18px -2px var(--skx-glow)}
+  .skx-row:hover .skx-fill{box-shadow:0 0 26px 0 var(--skx-glow)}
+}
+
+@media (max-width:900px),(pointer:coarse){
+  #skillset{scroll-snap-align:none;scroll-snap-stop:normal}
+}
+@media (max-width:560px){
+  .skx-card{border-radius:16px}
+  .skx-pct{font-size:12px;min-width:3.5em}
+  .skx-eye{letter-spacing:.24em}
+}
+
+/* ---------- light theme ---------- */
+:root[data-theme=light] #skillset{
+  --skx-glow:rgba(234,106,18,.5);--skx-track:rgba(154,52,18,.12);
+  --skx-card-a:rgba(255,255,255,.92);--skx-card-b:rgba(254,215,170,.42);
+  --skx-edge:rgba(234,106,18,.34);--skx-badge-bg:rgba(254,215,170,.55);--skx-badge-ink:var(--navy)
+}
+:root[data-theme=light] .skx-card{box-shadow:0 24px 50px -28px rgba(154,52,18,.35)}
+:root[data-theme=light] #skillset.in .skx-card{box-shadow:0 24px 50px -28px rgba(154,52,18,.35),0 0 50px -22px var(--skx-glow)}
+:root[data-theme=light] .skx-row+.skx-row::before{background:linear-gradient(90deg,transparent,rgba(154,52,18,.14),transparent)}
+:root[data-theme=light] .skx-bg::before{background-image:linear-gradient(rgba(194,65,12,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(194,65,12,.07) 1px,transparent 1px)}
+:root[data-theme=light] #skillset.in .skx-bg i{opacity:.2}
+:root[data-theme=light] .skx-track{box-shadow:inset 0 1px 2px rgba(154,52,18,.18)}
+:root[data-theme=light] .skx-fill::after{background:#fff}
+
+/* ---------- reduced motion: show the finished state, no movement ---------- */
+@media (prefers-reduced-motion:reduce){
+  .skx-eye,.skx-lead,.skx-card,.skx-row,.skx-h2 span{opacity:1!important;transform:none!important;filter:none!important;transition:none!important;animation:none!important}
+  .skx-eye::before{transform:none;transition:none}
+  .skx-bg::before{opacity:1;transition:none}
+  .skx-bg i,.skx-card::after,.skx-fill i::after,.skx-fill::after{animation:none!important}
+  .skx-fill::after{opacity:1;transform:none}
+}

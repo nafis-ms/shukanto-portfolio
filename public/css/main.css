@@ -585,8 +585,9 @@ footer {
   }
 }
 
-#background .two{
-    align-items: center;
+#services .two,
+#background .two {
+  align-items: center;
 }
 
 #feedback {

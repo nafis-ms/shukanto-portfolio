@@ -236,7 +236,19 @@ html.tt *,html.tt *::before,html.tt *::after{transition:background-color .35s ea
 @media(pointer:coarse){button{min-height:44px}.chip button{min-height:30px;width:30px}.pj button{min-height:40px}textarea{font-size:16px!important}}
 @media(max-width:520px){.rowi{flex-wrap:wrap}.rowi>button{margin-left:auto}.pgrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.addline{flex-wrap:wrap}.addline>button{flex:1}.prev{max-width:100%}.pj div{flex-direction:column;align-items:stretch;gap:6px}.pj span{text-align:center}.pj button{width:100%}.bar .vw span{display:none}.tabs{display:flex}.tabs button{flex:1;padding:0 8px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-  </style>
+  .slist{margin-top:6px}
+.slr{display:grid;grid-template-columns:minmax(0,1.5fr) 88px minmax(110px,1fr) auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);animation:chipIn .5s cubic-bezier(.34,1.56,.64,1) calc(var(--i,0)*30ms) backwards}
+.slr input[type=number]{width:100%;font:inherit;color:inherit;background:var(--fill);border:1px solid var(--line);border-radius:10px;padding:11px 10px;text-align:center}
+.slr input[type=number]:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 3px var(--ring)}
+.slr input[type=range]{width:100%;accent-color:var(--blue);min-height:0;padding:0;background:none;border:0}
+.slr .mv{display:flex;gap:6px}
+.slr .mv button{min-width:36px;padding:6px 10px}
+.sadd{display:grid;grid-template-columns:minmax(0,1.5fr) 88px auto;gap:10px;align-items:center;margin-top:16px}
+.sadd input[type=number]{width:100%;font:inherit;color:inherit;background:var(--fill);border:1px solid var(--line);border-radius:10px;padding:11px 10px;text-align:center}
+.sbarp{height:5px;border-radius:9px;background:var(--line);overflow:hidden;margin-top:8px;grid-column:1/-1}
+.sbarp i{display:block;height:100%;background:linear-gradient(90deg,var(--navy),var(--blue),var(--ice));transition:width .25s}
+@media(max-width:620px){.slr{grid-template-columns:minmax(0,1fr) 84px}.slr input[type=range]{grid-column:1/-1}.slr .mv{grid-column:1/-1;justify-content:flex-end}.sadd{grid-template-columns:minmax(0,1fr) 84px}.sadd button{grid-column:1/-1}}
+</style>
 </head>
 
 <body>
@@ -302,15 +314,17 @@ html.tt *,html.tt *::before,html.tt *::after{transition:background-color .35s ea
           Contact: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/>',
           CV: '<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>',
           Categories: '<path d="M4 6h7v7H4zM13 6h7v4h-7zM13 12h7v6h-7zM4 15h7v3H4z"/>',
-          Skills: '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>'
+          Skills: '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
+          "Skill Levels": '<path d="M5 20V11M12 20V4M19 20v-6"/>'
         };
-        var GROUPS = [["Dashboard", ["Overview"]], ["Content", ["About", "Services", "Qualification", "Projects"]], ["Community", ["Feedback", "Social", "Contact"]], ["Files", ["CV"]]];
+        var GROUPS = [["Dashboard", ["Overview"]], ["Content", ["About", "Services", "Qualification", "Projects", "Skill Levels"]], ["Community", ["Feedback", "Social", "Contact"]], ["Files", ["CV"]]];
         var META = {
           Overview: "A quick look at what is live on your site and what needs attention.",
           About: "The headline, text and contact details shown in the About section.",
           Services: "The services and skills listed on the site.",
           Qualification: "Interests shown in the Background section.",
           Projects: "Organise categories and manage every project on the sphere and in Show All.",
+          "Skill Levels": "Skills with a percentage out of 100, shown in a box under the Projects section.",
           Feedback: "Review what visitors send, or add feedback yourself.",
           Social: "Links for the social icons above Contact.",
           Contact: "The email behind the Email me button and the footer.",
@@ -406,7 +420,7 @@ html.tt *,html.tt *::before,html.tt *::after{transition:background-color .35s ea
 
         /* ---------- tabs ---------- */
         var navBuilt = false, ind = null;
-        function navCount(n) { if (n === "Projects") return D.projects.length; if (n === "Services") return D.services.length; if (n === "Feedback") return pending; return null }
+        function navCount(n) { if (n === "Projects") return D.projects.length; if (n === "Services") return D.services.length; if (n === "Skill Levels") return (D.skillLevels || []).length; if (n === "Feedback") return pending; return null }
         function moveInd() { var on = $("#tabs .ni.on"); if (!ind || !on) return; ind.style.opacity = 1; ind.style.height = on.offsetHeight + "px"; ind.style.transform = "translateY(" + on.offsetTop + "px)" }
         function drawTabs() {
           var t = $("#tabs");
@@ -435,7 +449,7 @@ html.tt *,html.tt *::before,html.tt *::after{transition:background-color .35s ea
           $("#crumbG").textContent = gname; $("#crumbT").textContent = n; $("#pEye").textContent = gname; $("#pTitle").textContent = n === "Overview" ? "Dashboard" : n; $("#pLead").textContent = META[n];
           var ph = $("#phead"); ph.classList.remove("go"); void ph.offsetWidth; ph.classList.add("go");
           var p = $("#panel"); p.textContent = "";
-          ({ Overview: Overview, About: About, Services: Services, Qualification: Qual, Projects: Projects, Feedback: Feedback, Social: Social, Contact: Contact, CV: CV })[n](p);
+          ({ Overview: Overview, About: About, Services: Services, Qualification: Qual, Projects: Projects, "Skill Levels": SkillLevels, Feedback: Feedback, Social: Social, Contact: Contact, CV: CV })[n](p);
           stag(p); scrollTo({ top: 0 });
         }
         function card(title, lead) { return h("div", { class: "card" }, [h("h2", { text: title }), h("p", { class: "lead", text: lead || "" })]) }
@@ -458,6 +472,7 @@ html.tt *,html.tt *::before,html.tt *::after{transition:background-color .35s ea
           [["Projects", D.projects.length > 0, D.projects.length ? D.projects.length + " on the sphere and in Show All" : "Add a project to show this section"],
           ["Services", D.services.length > 0, D.services.length ? D.services.length + " listed" : "Add a service to show this section"],
           ["Skills", sk > 0, sk ? sk + " skills in the Skills box" : "Add skills to show the Skills box"],
+          ["Skill Levels", (D.skillLevels || []).length > 0, (D.skillLevels || []).length ? (D.skillLevels || []).length + " skill bars under Projects" : "Add a skill to show the Skills section"],
           ["Social", hasSoc, hasSoc ? "Icons are visible above Contact" : "Add a link to show this section"],
           ["CV", hasCv, hasCv ? "Download CV buttons are visible" : "Upload a PDF to show the Download CV buttons"]].forEach(function (r) {
             var go = r[0] === "Skills" ? "Services" : r[0];
@@ -534,6 +549,54 @@ html.tt *,html.tt *::before,html.tt *::after{transition:background-color .35s ea
               var v = add.value.trim(); if (v) { skills.push(v); add.value = ""; draw() }
               var cur = D.qualification;
               saveC("qualification", { skills: skills, languages: cur.languages, interests: cur.interests }, "Skills saved.");
+            }
+          }));
+          p.appendChild(c);
+        }
+
+        /* ---------- Skill Levels (percentage bars under Projects) ---------- */
+        function SkillLevels(p) {
+          var items = (D.skillLevels || []).map(function (x) { return { id: x.id, name: x.name, level: x.level } });
+          var c = card("Skill levels", "Each skill is shown in a box under the Projects section with its percentage out of 100. Leave it empty to hide the section. Press Save to publish your changes.");
+          var list = h("div", { class: "slist" });
+          function clamp(v) { v = parseInt(v, 10); return isNaN(v) ? 0 : Math.max(0, Math.min(100, v)) }
+          function draw() {
+            list.textContent = "";
+            if (!items.length) list.appendChild(h("p", { class: "empty", text: "No skills yet. Add your first one below." }));
+            items.forEach(function (it, i) {
+              var name = inp(it.name, { maxlength: 40, "aria-label": "Skill name" }),
+                num = h("input", { type: "number", min: 0, max: 100, step: 1, inputmode: "numeric", "aria-label": "Percentage for " + (it.name || "skill") }),
+                rng = h("input", { type: "range", min: 0, max: 100, step: 1, "aria-label": "Percentage slider" }),
+                fillI = h("i"), bar = h("div", { class: "sbarp" }, [fillI]);
+              num.value = it.level; rng.value = clamp(it.level); fillI.style.width = clamp(it.level) + "%";
+              name.addEventListener("input", function () { it.name = name.value });
+              num.addEventListener("input", function () { it.level = num.value === "" ? "" : clamp(num.value); rng.value = clamp(num.value); fillI.style.width = clamp(num.value) + "%" });
+              num.addEventListener("blur", function () { if (num.value !== "") { num.value = clamp(num.value); it.level = +num.value } });
+              rng.addEventListener("input", function () { it.level = +rng.value; num.value = rng.value; fillI.style.width = rng.value + "%" });
+              var mv = h("div", { class: "mv" }, [
+                h("button", { type: "button", "aria-label": "Move up", text: "\u2191", onclick: function () { if (i > 0) { items.splice(i - 1, 0, items.splice(i, 1)[0]); draw() } } }),
+                h("button", { type: "button", "aria-label": "Move down", text: "\u2193", onclick: function () { if (i < items.length - 1) { items.splice(i + 1, 0, items.splice(i, 1)[0]); draw() } } }),
+                h("button", { type: "button", "aria-label": "Remove " + (it.name || "skill"), text: "\u00d7", onclick: function () { items.splice(i, 1); draw() } })
+              ]);
+              var row = h("div", { class: "slr", style: "--i:" + Math.min(i, 14) }, [name, num, rng, mv]);
+              list.appendChild(row); list.appendChild(h("div", { style: "margin:-4px 0 0" }, [bar]));
+            });
+          }
+          draw(); c.appendChild(list);
+          var an = inp("", { maxlength: 40, placeholder: "Skill name, e.g. Java & Spring Boot", "aria-label": "New skill name" }),
+            al = h("input", { type: "number", min: 0, max: 100, step: 1, inputmode: "numeric", placeholder: "%", "aria-label": "New skill percentage" });
+          function pushNew() {
+            var n = an.value.trim();
+            if (!n) { toast("Enter a skill name.", true); an.focus(); return false }
+            if (al.value === "" || isNaN(parseInt(al.value, 10)) || +al.value < 0 || +al.value > 100) { toast("Enter a percentage from 0 to 100.", true); al.focus(); return false }
+            items.push({ name: n, level: clamp(al.value) }); an.value = ""; al.value = ""; draw(); an.focus(); return true;
+          }
+          [an, al].forEach(function (e) { e.addEventListener("keydown", function (ev) { if (ev.key === "Enter") { ev.preventDefault(); pushNew() } }) });
+          c.appendChild(h("div", { class: "sadd" }, [an, al, h("button", { type: "button", text: "Add skill", onclick: pushNew })]));
+          c.appendChild(h("button", {
+            type: "button", class: "pri", style: "margin-top:20px", text: "Save skill levels", onclick: function () {
+              if (an.value.trim() || al.value !== "") { if (!pushNew()) return }
+              saveC("skilllevels", { items: items }, "Skill levels saved.", function () { show("Skill Levels") });
             }
           }));
           p.appendChild(c);

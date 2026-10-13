@@ -35,6 +35,7 @@ const DEFAULTS = {
     languages: "Bengali (excellent) and English (good).",
     interests: "Music, travel, games and always learning."
   },
+  skillLevels: [],                                /* [{id, name, level 0-100}] shown as percentage bars under Projects */
   contactEmail: "shukanto99@gmail.com",
   social: { instagram: "", linkedin: "", facebook: "", whatsapp: "" },
   categories: [],                                 /* [{id, name}] created in the admin panel */
@@ -81,6 +82,20 @@ const sections = {                                /* each validates, then update
   qualification(c, b) {
     if (!Array.isArray(b.skills) || b.skills.length > 30) throw new Error("Invalid skills (30 max).");
     c.qualification = { skills: b.skills.map(x => S(x, 40)).filter(Boolean), languages: S(b.languages, 200), interests: S(b.interests, 200) };
+  },
+  skilllevels(c, b) {                              /* skill bars: name + percentage out of 100 */
+    if (!Array.isArray(b.items) || b.items.length > 30) throw new Error("Invalid skills (30 max).");
+    const seen = new Set();
+    c.skillLevels = b.items.map(x => {
+      x = x && typeof x === "object" ? x : {};
+      const name = S(x.name, 40);
+      if (!name) throw new Error("Every skill needs a name.");
+      const raw = typeof x.level === "string" ? x.level.trim() : x.level, n = raw === "" || raw === null || raw === undefined ? NaN : Number(raw);
+      if (!Number.isFinite(n) || n < 0 || n > 100) throw new Error('"' + name + '" needs a percentage between 0 and 100.');
+      if (seen.has(name.toLowerCase())) throw new Error('"' + name + '" is listed twice.');
+      seen.add(name.toLowerCase());
+      return { id: S(x.id, 30) || newId(), name, level: Math.round(n) };
+    });
   },
   social(c, b) {                                   /* Instagram / LinkedIn / Facebook links + WhatsApp number; empty = hidden on the site */
     const NAMES = { instagram: "Instagram", linkedin: "LinkedIn", facebook: "Facebook" };

@@ -173,6 +173,7 @@
     </style>
     <link rel="stylesheet" href="css/social.css" />
     <link rel="stylesheet" href="css/skills.css" />
+    <link rel="stylesheet" href="css/skillbars.css" />
     <link rel="stylesheet" href="css/mobile.css" />
   </head>
 
@@ -182,7 +183,9 @@
       <nav aria-label="Main">
         <div class="links" id="navLinks">
           <a href="#about">About</a><a href="#services">Services</a
-          ><a href="#projects">Projects</a><a href="#feedback">Feedback</a
+          ><a href="#projects">Projects</a
+          ><a class="skx-nav" href="#skillset" hidden>Skills</a
+          ><a href="#feedback">Feedback</a
           ><a href="#contact">Contact</a>
         </div>
         <a class="cvbtn" id="cvHead" href="#" aria-label="Download CV" hidden
@@ -411,6 +414,20 @@
         </button>
         <div class="cue chrome"><s></s><span>Drag to rotate</span></div>
       </section>
+      <section id="skillset" class="skx" aria-labelledby="skxTitle" hidden>
+        <div class="skx-bg" aria-hidden="true"><i></i><i></i></div>
+        <div class="skx-in">
+          <p class="skx-eye">Expertise</p>
+          <h2 class="skx-h2" id="skxTitle"><span>Skills</span></h2>
+          <p class="skx-lead">
+            The tools and technologies I work with, and how confident I am in
+            each one.
+          </p>
+          <div class="skx-card" id="skxCard">
+            <div class="skx-list" id="skxList" role="list"></div>
+          </div>
+        </div>
+      </section>
       <section id="feedback" class="fb">
         <div class="fb-in">
           <h2>Feedback</h2>
@@ -609,7 +626,9 @@
       <span>&copy; 2026 Musbitul Haque</span>
       <nav aria-label="Footer">
         <a href="#about">About</a><a href="#services">Services</a
-        ><a href="#projects">Projects</a><a href="#feedback">Feedback</a
+        ><a href="#projects">Projects</a
+          ><a class="skx-nav" href="#skillset" hidden>Skills</a
+          ><a href="#feedback">Feedback</a
         ><a href="#contact">Contact</a>
       </nav>
       <div class="soc" id="socials"></div>
@@ -690,6 +709,7 @@
     <script src="js/site.js"></script>
     <script src="js/social.js"></script>
     <script src="js/skills.js"></script>
+    <script src="js/skillbars.js"></script>
     <script src="js/feedback.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/menu.js"></script>
