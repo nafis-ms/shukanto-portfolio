@@ -510,19 +510,6 @@ footer {
   align-items: center;
   padding-block: clamp(70px, 9vh, 110px);
 }
-/* the marquee strip is the bottom of the Services page, so Services + marquee = one screen */
-#services {
-  flex-direction: column;
-  align-items: stretch;
-  padding-bottom: 0;
-}
-#services .two {
-  margin: auto;
-}
-#services .marq {
-  flex: none;
-  margin: 0 calc(var(--pad) * -1);
-}
 #about .two,
 #services .two,
 #background .two {

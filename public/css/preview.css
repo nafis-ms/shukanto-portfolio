@@ -1,0 +1,10 @@
+/* Live YouTube previews (see js/preview.js).
+   The player is 16:9 and is made a bit larger than the 3:2 card, so it covers it
+   and the edges (where YouTube draws its title bar / logo) are cropped away. */
+.pv{position:absolute;inset:0;overflow:hidden;background:#000;opacity:0;transition:opacity .6s ease;pointer-events:none}
+.pv.on{opacity:1}
+.pv iframe{position:absolute;top:-17.5%;left:-30%;width:160%;height:135%;border:0;pointer-events:none}
+/* grid: match the thumbnail's dim + zoom-on-hover */
+.rows .pv{transition:opacity .6s ease,transform .8s}
+.rows .pv.on{opacity:.88}
+.rows figure:hover .pv{transform:scale(1.05);opacity:1}

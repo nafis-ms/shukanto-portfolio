@@ -153,7 +153,7 @@ html.tt *,html.tt *::before,html.tt *::after{
 
 /* apply the saved theme immediately (the loading splash hides any flash) */
 var saved=null;try{saved=localStorage.getItem("theme")}catch(e){}
-root.setAttribute("data-theme",saved==="light"?"light":"dark");
+root.setAttribute("data-theme",saved==="dark"?"dark":"light");
 
 /* styles */
 if(!document.getElementById("theme-style")){

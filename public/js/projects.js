@@ -12,7 +12,7 @@ function ph(i,t){
  var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl('+h+',55%,22%)"/><stop offset="1" stop-color="hsl('+h2+',60%,9%)"/></linearGradient></defs><rect width="600" height="400" fill="url(#g)"/><path d="M0 300 L600 230" stroke="hsla('+h2+',80%,70%,.25)" stroke-width="2"/><circle cx="300" cy="190" r="38" fill="none" stroke="#f4f2ef" stroke-opacity=".7" stroke-width="2"/><path d="M290 172 L318 190 L290 208Z" fill="#f4f2ef" fill-opacity=".85"/><text x="24" y="368" font-family="Georgia,serif" font-size="26" fill="#f4f2ef" fill-opacity=".85">'+t.replace(/&/g,"&amp;")+'</text></svg>';
  return "data:image/svg+xml;utf8,"+encodeURIComponent(s);
 }
-var U=[],cards=[],cimg=[],thumbs=[],R=300,persp=1150;
+var U=[],cards=[],cimg=[],thumbs=[],R=300,persp=1150,zs=[],pvS=[],pvG=[],gridIO=null;
 for(var i=0;i<N;i++){
  var y=1-(2*i+1)/N,rad=Math.sqrt(Math.max(0,1-y*y)),th=i*GA+PI/2,x=Math.cos(th)*rad,z=Math.sin(th)*rad;
  U.push({x:x,y:y,z:z,lat:Math.asin(y)*180/PI,lon:Math.atan2(x,z)*180/PI});
@@ -21,6 +21,7 @@ for(var i=0;i<N;i++){
  var f=document.createElement("figure"),im=document.createElement("img");im.alt="";im.decoding="async";
  im.onload=function(){this.classList.add("in");window.loadTick&&loadTick()};im.onerror=function(){window.loadTick&&loadTick()};im.src=thumbs[i];
  f.appendChild(im);c.appendChild(f);orb.appendChild(c);cards.push(c);cimg.push(im);
+ var yid=window.Preview&&Preview.ytId(P[i][5]);if(yid)pvS[i]=Preview.add(f,yid,c);
 }
 function layout(){
  var w=innerWidth,h=innerHeight,s=w<=380?0:w<=640?1:2;
@@ -34,8 +35,31 @@ function layout(){
 var work=$(".work"),inView=false;
 if("IntersectionObserver" in window){new IntersectionObserver(function(en){inView=en[0].isIntersecting;if(inView)work.classList.add("seen")},{threshold:.15}).observe(work)}else{inView=true;work.classList.add("seen")}
 var spin=0,tilt=-4,dragX=0,dragY=0,velX=.0,velY=0,LIM=32,focused=-1,dragging=false,shotOpen=false,auto=.035,lastO=[],lastD=[];
+var q=matchMedia("(pointer:coarse)").matches?25:1000;
 var still=matchMedia("(prefers-reduced-motion:reduce)").matches;
-function frame(){
+/* ---- sphere health: if 3D is broken or too slow on this device, swap the sphere for the slideshow ----
+   ?sphere=0 forces the slideshow, ?sphere=1 forces the sphere (handy for testing). */
+var sphereOn=true,force=(/[?&]sphere=([01])/.exec(location.search)||[])[1],hp={n:0,last:0,sum:0,cnt:0,done:force==="1"};
+function geoOK(){
+ /* in a working 3D scene the card facing us is clearly bigger than the one behind. If the browser flattens the scene they match. */
+ if(N<4)return true;
+ var f=0,b=0,i;for(i=1;i<N;i++){if(zs[i]>zs[f])f=i;if(zs[i]<zs[b])b=i}
+ if(zs[f]-zs[b]<.5)return true;
+ var rf=cards[f].getBoundingClientRect(),rb=cards[b].getBoundingClientRect();
+ if(!rf.width||!rb.width)return false;
+ return rf.width/rb.width>1.12;
+}
+function health(ts){
+ if(hp.done)return;
+ if(!inView||shotOpen||document.hidden){hp.last=0;return}
+ hp.n++;
+ if(hp.n===4&&!geoOK()){hp.done=true;useSlides("3d");return}
+ if(hp.last&&hp.n>14){var dt=ts-hp.last;if(dt<400){hp.sum+=dt;hp.cnt++}}
+ hp.last=ts;
+ if(hp.cnt>=50){hp.done=true;if(hp.sum/hp.cnt>75)useSlides("slow")}
+}
+function frame(ts){
+ if(!sphereOn)return;
  if(!inView&&!shotOpen){requestAnimationFrame(frame);return}
  if(!dragging&&!shotOpen){
   dragX+=velX+(still||body.classList.contains("gridview")?0:auto);
@@ -48,15 +72,16 @@ function frame(){
  head.style.transform="rotateX("+(-sx)+"deg) rotateY("+(-sy)+"deg) translateZ("+(R*.62)+"px)";
  var a=sx*PI/180,b=sy*PI/180,ca=Math.cos(a),sa=Math.sin(a),cb=Math.cos(b),sb=Math.sin(b),near=persp*.66;
  for(var i=0;i<N;i++){
-  var u=U[i],Y=-u.y,z1=Y*sa+u.z*ca,zf=-u.x*sb+z1*cb;
+  var u=U[i],Y=-u.y,z1=Y*sa+u.z*ca,zf=-u.x*sb+z1*cb;zs[i]=zf;
   var dim=1-(.14+.86*Math.pow((zf+1)/2,.85)),fade=1,absZ=zf*R;
   if(absZ>near)fade=Math.max(0,1-(absZ-near)/190);
   if(shotOpen){dim=Math.min(1,dim+.78);if(i===focused)fade=0}
-  dim=Math.round(dim*1000)/1000;fade=Math.round(fade*1000)/1000;
+  dim=Math.round(dim*q)/q;fade=Math.round(fade*q)/q;
   if(lastO[i]!==fade){lastO[i]=fade;cards[i].style.opacity=fade}
   if(lastD[i]!==dim){lastD[i]=dim;cards[i].style.setProperty("--d",dim)}
  }
- requestAnimationFrame(frame);
+ health(ts);
+ if(sphereOn)requestAnimationFrame(frame);
 }
 /* drag */
 var pid=null,sx0=0,sy0=0,lx=0,ly=0,moved=0,downCard=null,captured=false,coarse=matchMedia("(pointer:coarse)").matches;
@@ -132,15 +157,21 @@ function fig(i){
  var g=document.createElement("figure");g.dataset.idx=i;g.tabIndex=0;g.setAttribute("role","button");
  var gi=document.createElement("img");gi.alt=P[i][0];gi.loading="lazy";gi.src=thumbs[i];
  var gc=document.createElement("figcaption");gc.textContent=P[i][0];
- g.appendChild(gi);g.appendChild(gc);return g;
+ g.appendChild(gi);g.appendChild(gc);
+ var yid=window.Preview&&Preview.ytId(P[i][5]);
+ if(yid){var h=Preview.add(g,yid,g);if(h){g._pv=h;pvG.push(h);if(gridIO){h.vis=false;gridIO.observe(g)}}}
+ return g;
 }
 function renderGrid(id,focusBack){
  var list=CATS.filter(function(c){return id===null||c.id===id});
  if(id!==null&&!list.length){renderGrid(null);return}
+ pvG.forEach(function(h){Preview.drop(h)});pvG=[];
+ if(gridIO)gridIO.disconnect();
+ gridIO="IntersectionObserver" in window?new IntersectionObserver(function(en){en.forEach(function(e){if(e.target._pv)e.target._pv.vis=e.isIntersecting})},{root:$("#grid"),threshold:.4}):null;
  gridCat=id;rows.textContent="";
  if(!list.length){var em=document.createElement("p");em.className="cat-empty";em.textContent="No projects yet.";rows.appendChild(em)}
  list.forEach(function(c){
-  var sec=document.createElement("section"),hd=document.createElement("h3"),g=document.createElement("div"),full=id!==null;
+  var sec=document.createElement("section"),hd=document.createElement("h3"),g=document.createElement("div"),full=id!==null,n=c.items.length;
   sec.className="cat"+(full?" full":"");sec.setAttribute("aria-labelledby","cat-"+c.id);
   hd.className="cat-h";hd.id="cat-"+c.id;hd.textContent=c.name;hd.tabIndex=-1;
   g.className="rows";
@@ -150,12 +181,24 @@ function renderGrid(id,focusBack){
    bk.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>All projects';
    sec.appendChild(bk);
   }
-  sec.appendChild(hd);sec.appendChild(g);
-  if(!full&&c.items.length>PREVIEW){
-   var wrap=document.createElement("div"),b=document.createElement("button");
-   wrap.className="cat-more";b.type="button";b.className="btn viewall";b.dataset.cat=c.id;
-   b.textContent="View all ("+c.items.length+")";b.setAttribute("aria-label","View all "+c.items.length+" projects in "+c.name);
-   wrap.appendChild(b);sec.appendChild(wrap);
+  /* header: outlined number, name, a light running along a rule, project count */
+  var head=document.createElement("div"),no=document.createElement("span"),ln=document.createElement("span"),ct=document.createElement("span"),ci=CATS.indexOf(c)+1;
+  head.className="cat-head";no.className="cat-no";no.setAttribute("aria-hidden","true");no.textContent=(ci<10?"0":"")+ci;
+  ln.className="cat-line";ln.setAttribute("aria-hidden","true");ct.className="cat-count";ct.textContent=n+(n===1?" project":" projects");
+  head.appendChild(no);head.appendChild(hd);head.appendChild(ln);head.appendChild(ct);
+  sec.appendChild(head);sec.appendChild(g);
+  /* "View all" is the last tile of the row, right after the third project */
+  if(!full&&n>PREVIEW){
+   var b=document.createElement("button"),bg=document.createElement("span"),rest=c.items.slice(PREVIEW,PREVIEW+3);
+   b.type="button";b.className="vtile viewall";b.dataset.cat=c.id;b.setAttribute("aria-label","View all "+n+" projects in "+c.name);
+   bg.className="vt-bg"+(rest.length>1?" n"+rest.length:"");bg.setAttribute("aria-hidden","true");
+   rest.forEach(function(i){var im=document.createElement("img");im.alt="";im.decoding="async";im.src=thumbs[i];bg.appendChild(im)});
+   b.appendChild(bg);
+   var bt=document.createElement("span"),bb=document.createElement("span"),bd=document.createElement("span");
+   bt.className="vt-bar t";bb.className="vt-bar b";bd.className="vt-body";bd.setAttribute("aria-hidden","true");
+   bd.innerHTML='<span class="vt-kick"></span><span class="vt-row"><span class="vt-lbl">View all</span><span class="vt-arr"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>';
+   bd.firstChild.textContent="+"+(n-PREVIEW)+" more";
+   b.appendChild(bt);b.appendChild(bb);b.appendChild(bd);g.appendChild(b);
   }
   rows.appendChild(sec);
   if(full)hd.focus({preventScroll:true});
@@ -186,5 +229,88 @@ if(matchMedia("(hover:hover) and (pointer:fine)").matches){
  document.addEventListener("mouseover",function(e){dot.classList.toggle("wide",!!e.target.closest(".card,a,button,#grid figure"))});
  (function f(){cx+=(mx-cx)*.2;cy+=(my-cy)*.2;dot.style.transform="translate3d("+cx+"px,"+cy+"px,0)";requestAnimationFrame(f)})();
 }
-layout();frame();
+/* live previews: decide which few videos play right now */
+function pvTick(){
+ if(!window.Preview)return;
+ var live=inView&&!shotOpen&&!document.hidden,g=body.classList.contains("gridview"),want=[],i;
+ if(live&&!g&&sphereOn){
+  for(i=0;i<N;i++)if(pvS[i]&&zs[i]>.12)want.push(i);          /* only cards facing the viewer */
+  want.sort(function(a,b){return zs[b]-zs[a]});want=want.slice(0,Preview.max);
+ }
+ pvS.forEach(function(h,k){h.set(want.indexOf(k)>-1)});
+ var wg=(g&&!shotOpen&&!document.hidden)?pvG.filter(function(h){return h.vis}).slice(0,Preview.maxGrid):[];
+ pvG.forEach(function(h){h.set(wg.indexOf(h)>-1)});
+}
+setInterval(pvTick,350);
+/* ===== Showcase slideshow: used instead of the sphere where the sphere cannot run ===== */
+var slidesBuilt=false;
+function useSlides(why){
+ if(!sphereOn&&slidesBuilt)return;
+ sphereOn=false;work.classList.add("nosphere");body.classList.add("nosphere");
+ try{console.info("[projects] sphere unavailable ("+why+"): showing slideshow")}catch(e){}
+ pvS.forEach(function(h){h.set(false)});
+ if(!slidesBuilt)buildSlides();
+}
+function buildSlides(){
+ slidesBuilt=true;
+ var pad=function(n){return n<10?"0"+n:""+n};
+ var box=document.createElement("div");box.className="slides";box.id="slides";
+ box.setAttribute("role","region");box.setAttribute("aria-roledescription","carousel");box.setAttribute("aria-label","Project showcase");
+ var bg=document.createElement("div");bg.className="sl-bg";bg.setAttribute("aria-hidden","true");
+ var bgA=document.createElement("img"),bgB=document.createElement("img");bgA.alt=bgB.alt="";bg.appendChild(bgA);bg.appendChild(bgB);
+ var hd=document.createElement("div");hd.className="sl-head";hd.innerHTML='<span>Selected work</span><h2>Visuals</h2>';
+ var track=document.createElement("div");track.className="sl-track";track.tabIndex=0;track.setAttribute("aria-label","Projects, swipe or use arrow keys");
+ var sl=[];
+ for(var i=0;i<N;i++){(function(i){
+  var c=document.createElement("button");c.type="button";c.className="sl-card";c.dataset.idx=i;c.setAttribute("aria-label","Open "+P[i][0]+" ("+(i+1)+" of "+N+")");
+  var f=document.createElement("figure"),im=document.createElement("img");im.alt="";im.decoding="async";im.loading=i<3?"eager":"lazy";im.src=thumbs[i];
+  var pl=document.createElement("span");pl.className="sl-play";pl.setAttribute("aria-hidden","true");pl.innerHTML='<svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>';
+  var cp=document.createElement("figcaption"),t=document.createElement("b"),k=document.createElement("span"),n=document.createElement("i");
+  n.textContent=pad(i+1);t.textContent=P[i][0];k.textContent=P[i][1];cp.appendChild(n);cp.appendChild(t);cp.appendChild(k);
+  f.appendChild(im);f.appendChild(pl);f.appendChild(cp);c.appendChild(f);track.appendChild(c);sl.push(c);
+  c.addEventListener("click",function(){if(!shotOpen)openShot(i,c)});
+ })(i)}
+ var ui=document.createElement("div");ui.className="sl-ui";
+ var pv=document.createElement("button"),nx=document.createElement("button"),ct=document.createElement("div"),pr=document.createElement("s");
+ pv.type=nx.type="button";pv.className="sl-nav";nx.className="sl-nav";pv.setAttribute("aria-label","Previous project");nx.setAttribute("aria-label","Next project");
+ pv.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>';nx.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
+ ct.className="sl-count";ct.setAttribute("aria-live","polite");pr.setAttribute("aria-hidden","true");
+ var mid=document.createElement("div"),bar=document.createElement("div");mid.className="sl-mid";bar.className="sl-bar";bar.appendChild(pr);mid.appendChild(ct);mid.appendChild(bar);
+ ui.appendChild(pv);ui.appendChild(mid);ui.appendChild(nx);
+ box.appendChild(bg);box.appendChild(hd);box.appendChild(track);box.appendChild(ui);
+ work.insertBefore(box,$(".vig"));
+ var cur=-1,front=bgA,ticking=false,idleUntil=0,reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+ function setActive(i){
+  if(i===cur)return;cur=i;
+  sl.forEach(function(c,k){c.classList.toggle("on",k===i);c.tabIndex=k===i?0:-1;c.setAttribute("aria-current",k===i?"true":"false")});
+  var back=front===bgA?bgB:bgA;back.src=thumbs[i];back.classList.add("on");front.classList.remove("on");front=back;
+  ct.textContent=pad(i+1)+" / "+pad(N);pr.style.transform="scaleX("+((i+1)/N)+")";
+ }
+ function nearest(){
+  var mid=track.scrollLeft+track.clientWidth/2,best=0,bd=1e9;
+  for(var k=0;k<N;k++){var c=sl[k],d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);if(d<bd){bd=d;best=k}}
+  return best;
+ }
+ function go(i,smooth){
+  i=(i+N)%N;var c=sl[i];
+  track.scrollTo({left:c.offsetLeft+c.offsetWidth/2-track.clientWidth/2,behavior:smooth&&!reduce?"smooth":"auto"});
+ }
+ track.addEventListener("scroll",function(){if(ticking)return;ticking=true;requestAnimationFrame(function(){ticking=false;setActive(nearest())})},{passive:true});
+ pv.addEventListener("click",function(){idleUntil=Date.now()+9000;go(Math.max(0,cur)-1,true)});
+ nx.addEventListener("click",function(){idleUntil=Date.now()+9000;go(Math.max(0,cur)+1,true)});
+ ["pointerdown","wheel","touchstart","keydown"].forEach(function(ev){track.addEventListener(ev,function(){idleUntil=Date.now()+9000},{passive:true})});
+ track.addEventListener("keydown",function(e){
+  if(e.key==="ArrowRight"){e.preventDefault();go(cur+1,true)}else if(e.key==="ArrowLeft"){e.preventDefault();go(cur-1,true)}
+ });
+ addEventListener("resize",function(){go(Math.max(0,cur),false)});
+ setActive(0);go(0,false);
+ /* auto advance while the section is on screen and nobody is touching it */
+ if(!reduce&&N>1)setInterval(function(){
+  if(!inView||shotOpen||document.hidden||body.classList.contains("gridview")||Date.now()<idleUntil)return;
+  go(cur+1,true);
+ },4200);
+}
+layout();
+if(force==="0"||typeof CSS==="undefined"||!CSS.supports||!(CSS.supports("transform-style","preserve-3d")||CSS.supports("-webkit-transform-style","preserve-3d"))||!(CSS.supports("perspective","1px")||CSS.supports("-webkit-perspective","1px")))useSlides(force==="0"?"forced":"no 3d support");
+else frame();
 })();

@@ -85,7 +85,7 @@ header[data-fx=drop].in{animation:drop 1.2s var(--e) .4s backwards}
 @keyframes drop{from{opacity:0;transform:translateY(-24px)}}
 
 /* film look: letterbox bars open on load, plus light film grain */
-.lbx{position:fixed;left:0;right:0;height:14vh;background:#000;z-index:150;pointer-events:none;transition:transform 1.9s var(--cut)}
+.lbx{display:none!important;position:fixed;left:0;right:0;height:14vh;background:#000;z-index:150;pointer-events:none;transition:transform 1.9s var(--cut)}
 .lbx.t{top:0}.lbx.b{bottom:0}
 .lbx.t.open{transform:translateY(-100%)}
 .lbx.b.open{transform:translateY(100%)}

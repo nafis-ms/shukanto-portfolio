@@ -11,10 +11,10 @@
       name="description"
       content="Shukanto Shishir is a motion designer and video editor. Titles, edits, color and sound."
     />
-    <meta name="theme-color" content="#000405" />
+    <meta name="theme-color" content="#FFF8F1" />
     <script>
       (function () {
-        var t = "dark";
+        var t = "light";
         try {
           var s = localStorage.getItem("theme");
           if (s === "light" || s === "dark") t = s;
@@ -30,6 +30,7 @@
     />
     <link rel="stylesheet" href="css/main.css" />
     <link rel="stylesheet" href="css/projects.css" />
+    <link rel="stylesheet" href="css/preview.css" />
     <link rel="stylesheet" href="css/loader.css" />
     <link rel="stylesheet" href="css/cinematic.css" />
     <link rel="stylesheet" href="css/feedback.css" />
@@ -171,6 +172,7 @@
       }
     </style>
     <link rel="stylesheet" href="css/social.css" />
+    <link rel="stylesheet" href="css/skills.css" />
     <link rel="stylesheet" href="css/mobile.css" />
   </head>
 
@@ -319,7 +321,12 @@
       <section id="services">
         <div class="two">
           <h2>What I Provide</h2>
-          <ul class="list">
+          <div class="svc-col">
+            <div class="skills" id="skills" hidden>
+              <h3>Skills</h3>
+              <div class="chips" id="skillChips"></div>
+            </div>
+            <ul class="list">
             <li>
               <b
                 ><svg viewBox="0 0 24 24" aria-hidden="true">
@@ -365,21 +372,8 @@
               >
             </li>
           </ul>
-        </div>
-        <div class="marq" aria-hidden="true">
-        <div class="mtrack">
-          <div class="mset">
-            <span>Video Editing</span><span>Motion Designer</span
-            ><span>Color grading</span><span>Sound designing</span
-            ><span>Titles and type</span>
-          </div>
-          <div class="mset">
-            <span>Video editing</span><span>Motion Designer</span
-            ><span>Color grading</span><span>Sound designing</span
-            ><span>Titles and type</span>
           </div>
         </div>
-      </div>
       </section>
       <section class="work" id="projects" aria-label="Projects">
         <div id="stage">
@@ -683,17 +677,19 @@
     <div id="splash">
       <div class="mark">Shukanto Shishir</div>
       <div class="bar"><s id="bar"></s></div>
-      <div class="tag">Motion &amp; Video Editor</div>
+      <div class="tag">Video Editor</div>
     </div>
     <div id="dot"></div>
     <script src="/api/index?p=content"></script>
     <script src="js/content.js"></script>
     <script src="js/data.js"></script>
     <script src="js/loader.js"></script>
+    <script src="js/preview.js"></script>
     <script src="js/projects.js"></script>
     <script src="js/hero.js"></script>
     <script src="js/site.js"></script>
     <script src="js/social.js"></script>
+    <script src="js/skills.js"></script>
     <script src="js/feedback.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/menu.js"></script>

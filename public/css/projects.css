@@ -82,33 +82,87 @@ body.lit .plate{opacity:1}
 @media(max-height:520px) and (orientation:landscape){.bio,.cue{display:none}#headline{font-size:clamp(18px,4.8vh,28px)}.plate{width:min(58vw,calc((100dvh - 80px)*1.5))}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.14s!important}}
 
-/* ===== All Projects grouped by category (compact so several categories fit on one screen) ===== */
+/* ===== All Projects grouped by category: one glass panel per category ===== */
 #grid{padding-top:clamp(60px,8vh,80px)}
 #grid .cats{width:100%;max-width:1680px;margin:0 auto clamp(20px,3vw,36px);flex:none}
 /* the generic page-wide "section" rule adds 150px padding and a divider: not wanted here */
-#grid .cat{padding:0;border:0;margin:0 auto clamp(26px,3.4vw,44px)}
+#grid .cat{--g:clamp(10px,1.2vw,18px);position:relative;padding:clamp(16px,2vw,28px);border:1px solid var(--line);border-radius:16px;margin:0 auto clamp(22px,3vw,40px);max-width:1520px;
+ background:linear-gradient(160deg,rgba(15,76,117,.20),rgba(0,0,0,0) 46%),rgba(255,255,255,.015);box-shadow:0 24px 70px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.04)}
 #grid .cat:last-child{margin-bottom:0}
-.cat-h{font-family:var(--serif);font-weight:400;font-size:clamp(20px,2.1vw,30px);line-height:1.15;text-align:center;margin:0 0 clamp(10px,1.4vw,16px)}
+.cat-head{display:flex;align-items:center;gap:clamp(12px,1.6vw,22px);margin:0 0 clamp(14px,1.8vw,22px)}
+.cat-no{flex:none;font-family:var(--serif);font-size:clamp(34px,4.2vw,58px);line-height:.9;letter-spacing:-.02em;color:transparent;-webkit-text-stroke:1px var(--blue);opacity:.9}
+.cat-h{margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(22px,2.5vw,36px);line-height:1.1;color:var(--ink);background:linear-gradient(180deg,var(--ice),var(--blue));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .cat-h:focus{outline:0}
-/* these beat the generic .rows rules above and in the media queries */
-#grid .cat .rows{grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1vw,14px);max-width:800px;margin:0 auto}
-#grid .cat.full .rows{grid-template-columns:repeat(auto-fill,minmax(190px,230px));justify-content:center;max-width:1680px}
-.cat-more{display:flex;justify-content:center;margin-top:clamp(10px,1.4vw,16px)}
-.cat-more .btn{min-height:38px;padding:0 20px;font-size:13px}
+.cat-line{position:relative;flex:1;min-width:24px;height:1px;background:var(--line);overflow:hidden}
+.cat-line::after{content:"";position:absolute;inset:0;width:46%;background:linear-gradient(90deg,transparent,var(--blue),var(--ice));transform:translateX(-100%);animation:catRun 4.8s var(--cut) infinite}
+@keyframes catRun{0%{transform:translateX(-100%)}60%,100%{transform:translateX(230%)}}
+.cat-count{flex:none;display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid rgba(50,130,184,.5);border-radius:999px;background:rgba(15,76,117,.28);color:var(--ice);font-size:12px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.cat-count::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ice);box-shadow:0 0 8px var(--ice)}
+/* bigger tiles: 3 projects + the View all tile make a row of 4; a row of fewer is centered */
+#grid .cat .rows{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--g);max-width:none;margin:0}
+#grid .cat .rows>*{flex:0 0 calc((100% - 3*var(--g))/4);min-width:0}
+#grid .cat .rows figure{border-radius:8px}
+#grid .cat .rows figcaption{font-size:clamp(14px,1.2vw,17px)}
+#grid .cat.full .rows>*{flex-basis:calc((100% - 3*var(--g))/4)}
 .viewall{cursor:pointer}
-.cat-back{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 6px 0 0;font-size:13.5px;color:var(--dim);transition:color .3s}
+.cat-back{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-bottom:6px;padding:0 6px 0 0;font-size:13.5px;color:var(--dim);transition:color .3s}
 .cat-back:hover,.cat-back:focus-visible{color:var(--ink)}
 .cat-back svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .cat-empty{text-align:center;color:var(--dim);padding:60px 0}
 #litLink{margin-top:12px;min-height:38px;padding:0 18px;font-size:13px}
 #litLink[hidden]{display:none}
-@media(max-width:640px){
- #grid .cat .rows{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
- #grid .cat .rows figcaption{font-size:10.5px;padding:16px 6px 6px;line-height:1.25}
- #grid .cat.full .rows{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:380px){#grid .cat.full .rows{grid-template-columns:1fr}}
 
+/* ===== "View all" tile: sits right after the last project, same size as a project ===== */
+.vtile{position:relative;display:block;aspect-ratio:3/2;padding:0;border-radius:8px;overflow:hidden;isolation:isolate;color:#fff;text-align:left;background:#04121c;
+ box-shadow:0 0 0 1px rgba(187,225,250,.25),0 0 30px color-mix(in srgb,var(--blue) 45%,transparent);animation:vtGlow 3.2s ease-in-out infinite;transition:transform .5s var(--e)}
+.vtile:hover,.vtile:focus-visible{transform:translateY(-4px) scale(1.025)}
+/* a bright beam runs round the edge */
+.vtile::before{content:"";position:absolute;inset:-70%;z-index:-2;background:conic-gradient(from 0deg,transparent 0 52%,var(--blue) 72%,var(--ice) 88%,transparent 100%);animation:vtSpin 3.6s linear infinite}
+.vt-bg{position:absolute;inset:2px;z-index:-1;border-radius:6px;overflow:hidden;background:#04121c}
+.vt-bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;filter:saturate(.9) brightness(.62);animation:vtZoom 9s ease-in-out infinite alternate}
+.vt-bg img:first-child{opacity:1}
+.vt-bg.n2 img{animation:vtZoom 9s ease-in-out infinite alternate,vtF2 8s ease-in-out infinite}
+.vt-bg.n3 img{animation:vtZoom 9s ease-in-out infinite alternate,vtF3 12s ease-in-out infinite}
+.vt-bg img:nth-child(2){animation-delay:0s,4s}.vt-bg.n3 img:nth-child(2){animation-delay:0s,4s}
+.vt-bg.n3 img:nth-child(3){animation-delay:0s,8s}
+.vt-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,76,117,.78),rgba(2,10,16,.35) 55%,rgba(50,130,184,.45));mix-blend-mode:multiply}
+.vt-bg::before{content:"";position:absolute;top:0;bottom:0;left:0;width:38%;z-index:2;background:linear-gradient(100deg,transparent,rgba(255,255,255,.34),transparent);transform:translateX(-170%) skewX(-20deg);animation:sheen 4.2s 1s ease-in-out infinite}
+@keyframes vtSpin{to{transform:rotate(360deg)}}
+@keyframes vtGlow{0%,100%{box-shadow:0 0 0 1px rgba(187,225,250,.25),0 0 22px color-mix(in srgb,var(--blue) 35%,transparent)}50%{box-shadow:0 0 0 1px rgba(187,225,250,.55),0 0 44px color-mix(in srgb,var(--blue) 75%,transparent)}}
+@keyframes vtZoom{from{transform:scale(1.02)}to{transform:scale(1.16) translate(-2%,-2%)}}
+@keyframes vtF2{0%{opacity:0}8%,50%{opacity:1}58%,100%{opacity:0}}
+@keyframes vtF3{0%{opacity:0}6%,33%{opacity:1}40%,100%{opacity:0}}
+/* letterbox bars close in on hover, like a film cut */
+.vt-bar{position:absolute;left:0;right:0;height:15%;background:#000;z-index:3;transition:transform .55s var(--cut)}
+.vt-bar.t{top:0;transform:translateY(-100%)}.vt-bar.b{bottom:0;transform:translateY(100%)}
+.vtile:hover .vt-bar,.vtile:focus-visible .vt-bar{transform:none}
+.vt-body{position:absolute;inset:2px;z-index:4;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:clamp(8px,1.2vw,16px);padding:clamp(10px,2vw,26px)}
+.vt-kick{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;background:var(--ice);color:#04121c;font-size:clamp(10.5px,.9vw,12.5px);font-weight:500;letter-spacing:.14em;text-transform:uppercase;animation:vtPulse 2.2s ease-in-out infinite}
+@keyframes vtPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.vt-row{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}
+.vt-lbl{font-family:var(--serif);font-size:clamp(24px,2.7vw,42px);line-height:1;letter-spacing:.01em;text-shadow:0 2px 24px rgba(0,0,0,.6)}
+.vt-arr{flex:none;display:grid;place-items:center;width:clamp(36px,3vw,46px);height:clamp(36px,3vw,46px);border-radius:50%;border:1px solid rgba(187,225,250,.8);background:rgba(4,18,28,.4);transition:transform .5s var(--e),background .3s,color .3s}
+.vt-arr svg{width:55%;height:55%;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;animation:vtNudge 1.8s ease-in-out infinite}
+@keyframes vtNudge{0%,100%{transform:translateX(-2px)}50%{transform:translateX(3px)}}
+.vtile:hover .vt-arr,.vtile:focus-visible .vt-arr{transform:translateX(8px);background:var(--ice);color:#04121c}
+:root[data-theme=light] .vt-arr{color:#fff}
+
+@media(max-width:1100px){#grid .cat .rows>*,#grid .cat.full .rows>*{flex-basis:calc((100% - 2*var(--g))/3)}}
+@media(max-width:900px){
+ #grid .cat .rows>*,#grid .cat.full .rows>*{flex-basis:calc((100% - var(--g))/2)}
+ .rows{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+}
+@media(max-width:640px){
+ #grid .cat{padding:14px 12px;border-radius:12px}
+ .cat-head{flex-wrap:wrap;gap:6px 12px}
+ .cat-line{display:none}
+ .cat-h{flex:1;min-width:0}
+ .cat-count{padding:4px 11px;font-size:11px}
+ #grid .cat .rows{--g:8px}
+ #grid .cat .rows figcaption{font-size:12.5px;padding:18px 8px 8px;line-height:1.25}
+ .vt-lbl{font-size:21px}.vt-arr{width:32px;height:32px}.vt-kick{padding:4px 10px;font-size:10px}
+}
+@media(max-width:380px){#grid .cat .rows>*,#grid .cat.full .rows>*{flex-basis:100%}}
 
 /* ===== "Show All" grid button: tiles land like clips on a timeline, label rises out of a mask,
    then a light chases across the tiles and the letters every few seconds ===== */
@@ -142,10 +196,55 @@ body.lit .plate{opacity:1}
  .gb-ico,.gb-txt{transition:none}
 }
 
-/* ===== category headings in All Projects: accent gradient with light rules either side ===== */
-.cat-h{--h1:var(--ice);--h2:var(--blue);display:flex;align-items:center;justify-content:center;gap:clamp(12px,2vw,24px);
- background:linear-gradient(180deg,var(--h1),var(--h2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
-.cat-h::before,.cat-h::after{content:"";flex:1;max-width:clamp(40px,12vw,160px);height:1px;background:linear-gradient(90deg,transparent,var(--blue));box-shadow:0 0 10px rgba(50,130,184,.5);-webkit-text-fill-color:initial}
-.cat-h::after{transform:scaleX(-1)}
-:root[data-theme=light] .cat-h{--h1:var(--navy);--h2:var(--blue)}
-:root[data-theme=light] .cat-h::before,:root[data-theme=light] .cat-h::after{box-shadow:0 0 10px rgba(234,106,18,.45)}
+/* ===== Showcase slideshow: shown instead of the sphere on devices where the sphere cannot run ===== */
+.work.nosphere #stage,.work.nosphere .cue,.work.nosphere .vig{display:none}
+.slides{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;gap:clamp(14px,3vh,28px);padding:calc(70px + var(--st)) 0 calc(150px + var(--sb));overflow:hidden}
+.sl-bg{position:absolute;inset:0;z-index:-1;background:#000}
+.sl-bg img{position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover;opacity:0;filter:blur(34px) brightness(.38) saturate(1.25);transform:scale(1.05);transition:opacity 1.1s ease}
+.sl-bg img.on{opacity:1;animation:slDrift 14s ease-in-out infinite alternate}
+@keyframes slDrift{to{transform:scale(1.16) translate(-2%,1.5%)}}
+.sl-head{text-align:center;padding:0 var(--pad)}
+.sl-head span{display:block;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.sl-head h2{margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(34px,8vw,64px);line-height:1;color:#fff;text-shadow:0 2px 34px rgba(0,0,0,.55)}
+.work.seen .sl-head h2{animation:slIn 1.2s var(--e) .2s backwards}
+@keyframes slIn{from{opacity:0;transform:translateY(.4em);filter:blur(8px)}}
+.sl-track{display:flex;gap:clamp(12px,3vw,26px);overflow-x:auto;overflow-y:hidden;padding:24px calc((100% - var(--sw))/2) 70px;margin-bottom:-44px;--sw:min(78vw,560px);scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-x:contain;outline:0}
+.sl-track::-webkit-scrollbar{display:none}
+.sl-card{position:relative;flex:0 0 var(--sw);scroll-snap-align:center;scroll-snap-stop:always;border-radius:12px;opacity:.42;transform:scale(.86);transition:transform .7s var(--e),opacity .7s,box-shadow .7s;text-align:left}
+.sl-card.on{opacity:1;transform:none;box-shadow:0 16px 38px rgba(0,0,0,.55),0 0 0 1px rgba(187,225,250,.28),0 0 34px color-mix(in srgb,var(--blue) 30%,transparent)}
+.sl-card figure{position:relative;aspect-ratio:16/10;border-radius:12px;overflow:hidden;background:#0a0a0a}
+.sl-card img{width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--e)}
+.sl-card.on img{transform:scale(1.06)}
+.sl-card figure::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(0,0,0,.82));pointer-events:none}
+.sl-play{position:absolute;top:50%;left:50%;z-index:2;display:grid;place-items:center;width:clamp(48px,14vw,68px);height:clamp(48px,14vw,68px);margin:calc(clamp(48px,14vw,68px)/-2);border-radius:50%;border:1px solid rgba(244,242,239,.85);background:rgba(0,0,0,.35);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transform:scale(.8);opacity:0;transition:transform .6s var(--e),opacity .6s}
+.sl-card.on .sl-play{opacity:1;transform:none;animation:slPulse 2.4s ease-in-out 1s infinite}
+@keyframes slPulse{0%,100%{box-shadow:0 0 0 0 rgba(187,225,250,.5)}60%{box-shadow:0 0 0 16px rgba(187,225,250,0)}}
+.sl-play svg{width:42%;height:42%;fill:#f4f2ef;margin-left:6%}
+.sl-card figcaption{position:absolute;left:0;right:0;bottom:0;z-index:2;display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:baseline;padding:18px clamp(14px,3vw,22px) clamp(12px,2.6vw,18px)}
+.sl-card figcaption i{grid-row:span 2;font-style:normal;font-family:var(--serif);font-size:clamp(22px,6vw,32px);color:transparent;-webkit-text-stroke:1px var(--ice);line-height:1}
+.sl-card figcaption b{font-family:var(--serif);font-weight:400;font-size:clamp(17px,4.6vw,24px);line-height:1.15;color:#fff}
+.sl-card figcaption span{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ice)}
+.sl-ui{display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,22px);padding:0 var(--pad)}
+.sl-nav{display:grid;place-items:center;width:44px;height:44px;flex:none;border:1px solid rgba(244,242,239,.6);border-radius:50%;color:#f4f2ef;background:rgba(0,0,0,.35);transition:background .3s,color .3s,border-color .3s}
+.sl-nav:hover,.sl-nav:focus-visible{background:var(--ice);color:#04121c;border-color:var(--ice)}
+.sl-nav svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sl-mid{display:grid;justify-items:center;gap:8px;width:min(46vw,220px)}
+.sl-count{font-size:12px;letter-spacing:.24em;color:var(--ice)}
+.sl-bar{width:100%;height:2px;border-radius:2px;background:rgba(244,242,239,.2);overflow:hidden}
+.sl-bar s{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--ice));transform-origin:left;transition:transform .7s var(--e)}
+.work.nosphere .bio{max-width:min(300px,calc(100vw - var(--pad)*2 - 150px))}
+@media(max-width:900px){.work.nosphere .bio p{display:none}}
+@media(max-height:560px) and (orientation:landscape){
+ .slides{padding:56px 0 20px;gap:6px}.sl-head span{display:none}.sl-head h2{font-size:26px}.sl-track{--sw:min(46vw,380px);padding-top:6px;padding-bottom:10px}
+ .sl-ui{position:absolute;right:var(--pad);bottom:10px}.work.nosphere .gridbtn{bottom:64px}
+}
+@media(prefers-reduced-motion:reduce){.sl-bg img.on,.sl-card.on .sl-play{animation:none}.sl-track{scroll-behavior:auto}}
+
+/* light theme: keep the category panels readable on the cream background */
+:root[data-theme=light] #grid .cat{background:rgba(255,255,255,.55);border-color:rgba(43,27,18,.14);box-shadow:0 18px 44px rgba(43,27,18,.12),inset 0 1px 0 rgba(255,255,255,.7)}
+:root[data-theme=light] .cat-h{background-image:linear-gradient(180deg,var(--navy),var(--blue))}
+:root[data-theme=light] .cat-no{-webkit-text-stroke-color:var(--navy)}
+:root[data-theme=light] .cat-count{background:rgba(194,65,12,.1);border-color:rgba(194,65,12,.45);color:var(--navy)}
+:root[data-theme=light] .cat-count::before{background:var(--navy);box-shadow:0 0 8px var(--navy)}
+:root[data-theme=light] .cat-line{background:rgba(43,27,18,.16)}
+:root[data-theme=light] .cat-line::after{background:linear-gradient(90deg,transparent,var(--blue),var(--navy))}

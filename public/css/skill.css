@@ -1,0 +1,60 @@
+/* Skills box above the services list. Chips come from the admin panel (see js/skills.js).
+   Load after theme.css / social.css. Light theme is handled at the bottom. */
+.svc-col{min-width:0}
+.skills[hidden]{display:none}
+.skills{
+  position:relative;margin-bottom:clamp(18px,2.4vw,30px);padding:clamp(18px,2.2vw,28px);
+  border:1px solid rgba(50,130,184,.5);border-radius:14px;
+  background:radial-gradient(ellipse 90% 130% at 100% 0%,rgba(15,76,117,.5),rgba(15,76,117,.08) 72%);
+  box-shadow:inset 0 0 0 1px rgba(187,225,250,.05),0 14px 40px rgba(15,76,117,.28)
+}
+.skills h3{
+  --h1:var(--ice);--h2:var(--blue);margin:0 0 16px;
+  font-family:var(--serif);font-weight:400;font-size:clamp(22px,2.1vw,30px);line-height:1.1;
+  background:linear-gradient(180deg,var(--h1),var(--h2));-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent
+}
+.skills .chips{gap:10px}
+.skills .chips span{
+  position:relative;overflow:hidden;padding:8px 18px;font-size:14px;color:var(--ice);
+  border-color:rgba(187,225,250,.42);
+  background:linear-gradient(135deg,rgba(50,130,184,.38),rgba(15,76,117,.26));
+  box-shadow:0 0 14px rgba(50,130,184,.2);
+  transition:transform .45s var(--e),background .4s,color .4s,border-color .4s,box-shadow .45s
+}
+/* light sweep that runs across a chip on hover */
+.skills .chips span::after{
+  content:"";position:absolute;top:0;bottom:0;left:0;width:45%;pointer-events:none;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.6),transparent);
+  transform:translateX(-160%) skewX(-20deg)
+}
+@media (hover:hover){
+  .skills .chips span:hover{
+    transform:translateY(-5px) scale(1.07);
+    background:linear-gradient(135deg,var(--ice),#8fc7ee);color:#021018;border-color:var(--ice);
+    box-shadow:0 12px 28px rgba(50,130,184,.55),0 0 0 4px rgba(50,130,184,.22)
+  }
+  .skills .chips span:hover::after{animation:skSheen .85s ease}
+}
+.skills .chips span:active{transform:translateY(-1px) scale(.97)}
+@keyframes skSheen{to{transform:translateX(420%) skewX(-20deg)}}
+
+/* entrance: chips pop in one after another (the box itself rises via cinematic.js) */
+.skills[data-fx=up]:not(.in) .chips span{opacity:0;transform:scale(.5)}
+.skills[data-fx=up].in .chips span{animation:pop .7s cubic-bezier(.34,1.56,.64,1) calc(.55s + var(--j,0)*70ms) backwards}
+
+/* light theme */
+:root[data-theme=light] .skills{
+  border-color:rgba(234,106,18,.55);
+  background:radial-gradient(ellipse 90% 130% at 100% 0%,rgba(254,215,170,.75),rgba(254,215,170,.18) 72%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.5),0 14px 40px rgba(194,65,12,.16)
+}
+:root[data-theme=light] .skills h3{--h1:var(--navy);--h2:var(--blue)}
+:root[data-theme=light] .skills .chips span{box-shadow:0 0 14px rgba(234,106,18,.18)}
+@media (hover:hover){
+  :root[data-theme=light] .skills .chips span:hover{box-shadow:0 12px 28px rgba(194,65,12,.4),0 0 0 4px rgba(234,106,18,.2)}
+}
+@media (prefers-reduced-motion:reduce){
+  .skills .chips span{transition:none}
+  .skills .chips span:hover::after{animation:none}
+}

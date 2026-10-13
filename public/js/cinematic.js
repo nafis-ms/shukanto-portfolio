@@ -16,6 +16,7 @@ var T=[
  ["#about .contact li","wipe",0,2,.18],
  ["#about .cvdl","up",0,2.7],
  ["#services h2","track"],
+ ["#services .skills","up",0,.15],
  ["#services .list li","wipe",0,.3,.16],
  ["#background h2","flip","chars"],
  ["#background .list li","wipe",0,.2,.14],
@@ -68,10 +69,9 @@ $$(".list li").forEach(function(li){
 });
 $$(".tl .clip").forEach(function(c,k){c.style.setProperty("--k",k)});
 
-/* film look: letterbox + grain */
-var top=document.createElement("div"),bot=document.createElement("div"),gr=document.createElement("div");
-top.className="lbx t";bot.className="lbx b";gr.className="grain";
-[top,bot,gr].forEach(function(e){e.setAttribute("aria-hidden","true");body.appendChild(e)});
+/* film look: grain (the black letterbox bars were removed) */
+var gr=document.createElement("div");
+gr.className="grain";gr.setAttribute("aria-hidden","true");body.appendChild(gr);
 
 /* play when visible, reset when out of view so it replays */
 var io=new IntersectionObserver(function(en){en.forEach(function(e){
@@ -81,7 +81,6 @@ var io=new IntersectionObserver(function(en){en.forEach(function(e){
 
 /* wait for the loader to finish before the first scene */
 function boot(){
- setTimeout(function(){top.classList.add("open");bot.classList.add("open")},350);
  setTimeout(function(){els.forEach(function(e){io.observe(e)})},1000);
 }
 if(body.classList.contains("revealed"))boot();
