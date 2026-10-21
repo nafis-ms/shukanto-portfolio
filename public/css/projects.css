@@ -12,11 +12,25 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 #orb{position:absolute;top:0;left:0;width:0;height:0;transform-style:preserve-3d}
 #headline{position:absolute;top:0;left:0;width:var(--hw);margin-left:calc(var(--hw)/-2);text-align:center;font-family:"Outfit","Inter",sans-serif;font-weight:900;font-size:clamp(64px,11vw,190px);line-height:.92;letter-spacing:-.045em;text-transform:uppercase;white-space:nowrap;color:var(--ink);pointer-events:none;user-select:none}
 #headline .inner{position:absolute;top:0;left:0;width:100%;transform:translateY(-50%)}
-#headline .inner span{display:inline-block;opacity:0;transform:translateY(.42em);filter:blur(7px)}
-/* same gradient-filled heavy look as LET'S TALK (gradient lives on the span so the reveal animation still works) */
-#headline .inner span{padding:0 .04em;text-shadow:none;background:linear-gradient(180deg,var(--ice) 0%,var(--blue) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
-:root[data-theme=light] #headline .inner span{background:linear-gradient(180deg,var(--navy) 0%,var(--blue) 100%);-webkit-background-clip:text;background-clip:text}
-.work.seen #headline .inner span{opacity:1;transform:none;filter:blur(0);transition:opacity 1.05s,transform 1.15s,filter 1.05s;transition-delay:calc(.4s + var(--i)*.085s)}
+/* ===== cinematic headline: tracking-in, letter-by-letter blur reveal, travelling light sweep, glow, drawn rule ===== */
+#headline .inner{letter-spacing:.16em;font-kerning:none;filter:drop-shadow(0 10px 36px color-mix(in srgb,var(--blue) 50%,transparent))}
+#headline .inner>span{display:inline-block}
+#headline .ch{display:inline-block;padding:0 .02em;opacity:0;transform:translateY(.55em) scale(1.14);filter:blur(16px);text-shadow:none;
+ background:linear-gradient(112deg,transparent 38%,rgba(255,255,255,.95) 50%,transparent 62%) 160% 0/300% 100% no-repeat,linear-gradient(180deg,#f4fbff 0%,var(--ice) 34%,var(--blue) 100%);
+ -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+:root[data-theme=light] #headline .inner{filter:drop-shadow(0 10px 34px rgba(234,106,18,.32))}
+:root[data-theme=light] #headline .ch{background:linear-gradient(112deg,transparent 38%,rgba(255,244,230,.97) 50%,transparent 62%) 160% 0/300% 100% no-repeat,linear-gradient(180deg,#9a2f08 0%,var(--navy) 32%,var(--blue) 100%);-webkit-background-clip:text;background-clip:text}
+.work.seen #headline .inner{letter-spacing:-.045em;transition:letter-spacing 2.8s cubic-bezier(.16,1,.3,1) .2s}
+.work.seen #headline .ch{opacity:1;transform:none;filter:blur(0);transition:opacity 1.1s cubic-bezier(.22,1,.36,1),transform 1.6s cubic-bezier(.16,1,.3,1),filter 1.3s ease;transition-delay:calc(.35s + var(--i)*.09s);animation:hlSheen 7s ease-in-out calc(2.7s + var(--i)*.14s) infinite}
+@keyframes hlSheen{0%{background-position:160% 0,0 0}28%,100%{background-position:-60% 0,0 0}}
+/* small label above and a rule that draws out below */
+#headline .inner::before{content:"Selected work";position:absolute;left:0;right:0;bottom:100%;margin-bottom:clamp(6px,1.1vw,18px);text-align:center;font-size:clamp(10px,1.05vw,15px);font-weight:500;letter-spacing:.55em;text-indent:.55em;text-transform:uppercase;white-space:nowrap;color:var(--ice);opacity:0;transform:translateY(10px);transition:opacity 1.4s ease 1.4s,transform 1.6s cubic-bezier(.16,1,.3,1) 1.4s}
+#headline .inner::after{content:"";position:absolute;left:19%;width:62%;top:100%;height:2px;margin-top:clamp(8px,1.3vw,22px);background:linear-gradient(90deg,transparent,var(--blue) 25%,var(--ice) 50%,var(--blue) 75%,transparent);opacity:.9;transform:scaleX(0);transform-origin:center;transition:transform 2s cubic-bezier(.16,1,.3,1) 1.1s}
+.work.seen #headline .inner::before{opacity:.85;transform:none}
+.work.seen #headline .inner::after{transform:scaleX(1)}
+:root[data-theme=light] #headline .inner::before{color:var(--navy)}
+:root[data-theme=light] #headline .inner::after{background:linear-gradient(90deg,transparent,var(--navy) 25%,var(--blue) 50%,var(--navy) 75%,transparent)}
+@media(prefers-reduced-motion:reduce){.work.seen #headline .ch{animation:none}}
 .card{position:absolute;top:0;left:0;width:var(--cw);height:calc(var(--cw)/1.5);margin-left:calc(var(--cw)/-2);margin-top:calc(var(--cw)/-3);cursor:pointer;transform-style:preserve-3d;border:0;padding:0}
 .card figure{position:absolute;inset:0;overflow:hidden;border-radius:3px;background:#0a0a0a;transition:transform .5s ease}
 .card:hover figure,.card:focus-visible figure{transform:scale(1.045)}
@@ -80,7 +94,7 @@ body.lit .plate{opacity:1}
 #dot.wide{width:52px;height:52px;margin:-26px;background:rgba(244,242,239,.14);border-color:rgba(244,242,239,.75)}
 @media(hover:none),(pointer:coarse){#dot{display:none}}
 @media(max-width:900px){.bio{max-width:min(420px,calc(100vw - var(--pad)*2 - 96px))}.bio p{font-size:12px}.meta{grid-template-columns:1fr;gap:10px}.plate{width:min(92vw,calc((100dvh - 220px)*1.5))}.rows{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
-@media(max-width:640px){.work{--hw:min(84vw,360px)}.cue{display:none}.mono{width:42px;height:42px;font-size:22px}.who b{font-size:17px}.bio p{font-size:11.5px}#lit{display:block;overflow:auto;padding:calc(52px + var(--st)) var(--pad) var(--pad)}.plate{width:100%;max-width:560px;margin:0 auto}.rows{grid-template-columns:1fr 1fr;gap:8px}.rows figcaption{opacity:1;transform:none;font-size:13px}#headline{font-size:clamp(48px,18vw,110px)}}
+@media(max-width:640px){.work{--hw:min(84vw,360px)}.cue{display:none}.mono{width:42px;height:42px;font-size:22px}.who b{font-size:17px}.bio p{font-size:11.5px}#lit{display:block;overflow:auto;padding:calc(52px + var(--st)) var(--pad) var(--pad)}.plate{width:100%;max-width:560px;margin:0 auto}.rows{grid-template-columns:1fr 1fr;gap:8px}.rows figcaption{opacity:1;transform:none;font-size:13px}#headline{font-size:clamp(48px,18vw,110px)}#headline .inner{letter-spacing:.07em}}
 @media(max-width:380px){.bio p{display:none}.rows{grid-template-columns:1fr}}
 @media(max-height:520px) and (orientation:landscape){.bio,.cue{display:none}#headline{font-size:clamp(36px,13vh,72px)}.plate{width:min(58vw,calc((100dvh - 80px)*1.5))}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.14s!important}}
