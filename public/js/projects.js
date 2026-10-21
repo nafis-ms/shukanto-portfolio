@@ -181,11 +181,13 @@ function renderGrid(id,focusBack){
    bk.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>All projects';
    sec.appendChild(bk);
   }
-  /* header: outlined number, name, a light running along a rule, project count */
-  var head=document.createElement("div"),no=document.createElement("span"),ln=document.createElement("span"),ct=document.createElement("span"),ci=CATS.indexOf(c)+1;
-  head.className="cat-head";no.className="cat-no";no.setAttribute("aria-hidden","true");no.textContent=(ci<10?"0":"")+ci;
+  /* header: name centered, a light running along a rule on each side, project count at the right */
+  var head=document.createElement("div"),l1=document.createElement("span"),ln=document.createElement("span"),ct=document.createElement("span"),end=document.createElement("div");
+  head.className="cat-head";
+  l1.className="cat-line";l1.setAttribute("aria-hidden","true");
   ln.className="cat-line";ln.setAttribute("aria-hidden","true");ct.className="cat-count";ct.textContent=n+(n===1?" project":" projects");
-  head.appendChild(no);head.appendChild(hd);head.appendChild(ln);head.appendChild(ct);
+  end.className="cat-end";end.appendChild(ln);end.appendChild(ct);
+  head.appendChild(l1);head.appendChild(hd);head.appendChild(end);
   sec.appendChild(head);sec.appendChild(g);
   /* "View all" is the last tile of the row, right after the third project */
   if(!full&&n>PREVIEW){
