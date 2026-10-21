@@ -7,6 +7,11 @@ var N=P.length,GA=Math.PI*(3-Math.sqrt(5)),PI=Math.PI;
 var $=function(s){return document.querySelector(s)};
 var body=document.body,root=document.documentElement,world=$("#world"),orb=$("#orb"),head=$("#headline"),rows=$("#rows"),plate=$("#plate"),stage=$("#stage");
 var clamp=function(v,a,b){return Math.max(a,Math.min(b,v))};
+/* cinematic headline: one span per letter (staggered reveal + travelling light sweep, see projects.css) */
+(function(){var w=head&&head.querySelector(".inner>span");if(!w)return;var t=(w.textContent||"").trim();if(!t)return;
+ head.setAttribute("aria-label",t);w.setAttribute("aria-hidden","true");w.textContent="";
+ t.split("").forEach(function(ch,k){var l=document.createElement("span");l.className="ch";l.style.setProperty("--i",k);l.textContent=ch;w.appendChild(l)})})();
+
 function ph(i,t){
  var h=(i*47+200)%360,h2=(h+50)%360;
  var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl('+h+',55%,22%)"/><stop offset="1" stop-color="hsl('+h2+',60%,9%)"/></linearGradient></defs><rect width="600" height="400" fill="url(#g)"/><path d="M0 300 L600 230" stroke="hsla('+h2+',80%,70%,.25)" stroke-width="2"/><circle cx="300" cy="190" r="38" fill="none" stroke="#f4f2ef" stroke-opacity=".7" stroke-width="2"/><path d="M290 172 L318 190 L290 208Z" fill="#f4f2ef" fill-opacity=".85"/><text x="24" y="368" font-family="Georgia,serif" font-size="26" fill="#f4f2ef" fill-opacity=".85">'+t.replace(/&/g,"&amp;")+'</text></svg>';
