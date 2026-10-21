@@ -1,7 +1,7 @@
 /* Projects section: 3D sphere, grid view and lightbox */
 :root{--persp:1150px}
 .work,#grid,#lit,.gridclose,#dot,#intro,#splash{--pad:clamp(14px,2.6vw,34px);--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);--sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px)}
-.work{--hw:min(56vw,640px);position:relative;height:100vh;height:100svh;min-height:520px;padding:0;overflow:hidden;background:#000}
+.work{--hw:min(92vw,1200px);position:relative;height:100vh;height:100svh;min-height:520px;padding:0;overflow:hidden;background:#000}
 body.gridview,body.lit{overflow:hidden}
 .gridclose{position:fixed;top:calc(14px + var(--st));right:var(--pad);z-index:30;display:none;min-width:44px;min-height:44px;padding:10px 16px;border:1px solid rgba(244,242,239,.78);border-radius:6px;background:rgba(0,0,0,.45);color:#f4f2ef;font-size:13px}
 body.gridview .gridclose{display:block}
@@ -10,9 +10,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 #stage{position:absolute;inset:0;z-index:1;perspective:var(--persp);overflow:hidden;touch-action:pan-y;transition:opacity .6s,filter .6s}
 #world{position:absolute;top:50%;left:50%;width:0;height:0;transform-style:preserve-3d;will-change:transform}
 #orb{position:absolute;top:0;left:0;width:0;height:0;transform-style:preserve-3d}
-#headline{position:absolute;top:0;left:0;width:var(--hw);margin-left:calc(var(--hw)/-2);text-align:center;font-family:var(--serif);font-weight:400;font-size:clamp(25px,3.7vw,55px);line-height:1.06;color:#fff;text-shadow:0 2px 34px rgba(0,0,0,.55);pointer-events:none;user-select:none}
+#headline{position:absolute;top:0;left:0;width:var(--hw);margin-left:calc(var(--hw)/-2);text-align:center;font-family:"Outfit","Inter",sans-serif;font-weight:900;font-size:clamp(64px,11vw,190px);line-height:.92;letter-spacing:-.045em;text-transform:uppercase;white-space:nowrap;color:var(--ink);pointer-events:none;user-select:none}
 #headline .inner{position:absolute;top:0;left:0;width:100%;transform:translateY(-50%)}
 #headline .inner span{display:inline-block;opacity:0;transform:translateY(.42em);filter:blur(7px)}
+/* same gradient-filled heavy look as LET'S TALK (gradient lives on the span so the reveal animation still works) */
+#headline .inner span{padding:0 .04em;text-shadow:none;background:linear-gradient(180deg,var(--ice) 0%,var(--blue) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+:root[data-theme=light] #headline .inner span{background:linear-gradient(180deg,var(--navy) 0%,var(--blue) 100%);-webkit-background-clip:text;background-clip:text}
 .work.seen #headline .inner span{opacity:1;transform:none;filter:blur(0);transition:opacity 1.05s,transform 1.15s,filter 1.05s;transition-delay:calc(.4s + var(--i)*.085s)}
 .card{position:absolute;top:0;left:0;width:var(--cw);height:calc(var(--cw)/1.5);margin-left:calc(var(--cw)/-2);margin-top:calc(var(--cw)/-3);cursor:pointer;transform-style:preserve-3d;border:0;padding:0}
 .card figure{position:absolute;inset:0;overflow:hidden;border-radius:3px;background:#0a0a0a;transition:transform .5s ease}
@@ -77,9 +80,9 @@ body.lit .plate{opacity:1}
 #dot.wide{width:52px;height:52px;margin:-26px;background:rgba(244,242,239,.14);border-color:rgba(244,242,239,.75)}
 @media(hover:none),(pointer:coarse){#dot{display:none}}
 @media(max-width:900px){.bio{max-width:min(420px,calc(100vw - var(--pad)*2 - 96px))}.bio p{font-size:12px}.meta{grid-template-columns:1fr;gap:10px}.plate{width:min(92vw,calc((100dvh - 220px)*1.5))}.rows{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
-@media(max-width:640px){.work{--hw:min(84vw,360px)}.cue{display:none}.mono{width:42px;height:42px;font-size:22px}.who b{font-size:17px}.bio p{font-size:11.5px}#lit{display:block;overflow:auto;padding:calc(52px + var(--st)) var(--pad) var(--pad)}.plate{width:100%;max-width:560px;margin:0 auto}.rows{grid-template-columns:1fr 1fr;gap:8px}.rows figcaption{opacity:1;transform:none;font-size:13px}#headline{font-size:clamp(22px,6.4vw,34px)}}
+@media(max-width:640px){.work{--hw:min(84vw,360px)}.cue{display:none}.mono{width:42px;height:42px;font-size:22px}.who b{font-size:17px}.bio p{font-size:11.5px}#lit{display:block;overflow:auto;padding:calc(52px + var(--st)) var(--pad) var(--pad)}.plate{width:100%;max-width:560px;margin:0 auto}.rows{grid-template-columns:1fr 1fr;gap:8px}.rows figcaption{opacity:1;transform:none;font-size:13px}#headline{font-size:clamp(48px,18vw,110px)}}
 @media(max-width:380px){.bio p{display:none}.rows{grid-template-columns:1fr}}
-@media(max-height:520px) and (orientation:landscape){.bio,.cue{display:none}#headline{font-size:clamp(18px,4.8vh,28px)}.plate{width:min(58vw,calc((100dvh - 80px)*1.5))}}
+@media(max-height:520px) and (orientation:landscape){.bio,.cue{display:none}#headline{font-size:clamp(36px,13vh,72px)}.plate{width:min(58vw,calc((100dvh - 80px)*1.5))}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.14s!important}}
 
 /* ===== All Projects grouped by category: one glass panel per category ===== */
